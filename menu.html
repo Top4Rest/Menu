@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Меню</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Montserrat:wght@300;400;500&display=swap');
+  :root {
+    --burgundy: #6B2737;
+    --burgundy-light: #8B3A4A;
+    --cream: #F5F0E8;
+    --cream-dark: #EDE6D6;
+    --gold: #C9A96E;
+    --gold-light: #E2C88A;
+    --charcoal: #2A2420;
+    --warm-gray: #8A8078;
+    --divider: rgba(201,169,110,0.3);
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html { background-color:#2A2420 !important; }
+
+  body {
+    font-family:'Montserrat', Arial, sans-serif;
+    background-color:#2A2420 !important;
+    background:#2A2420 !important;
+    color:#F5F0E8;
+    min-height:100vh;
+    overflow-x:hidden;
+  }
+
+  body::before {
+    content:''; position:fixed; top:0;left:0;right:0;bottom:0;
+    background:
+      radial-gradient(ellipse at 20% 20%, rgba(107,39,55,.15) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 80%, rgba(107,39,55,.10) 0%, transparent 60%),
+      linear-gradient(160deg,#1E1A18 0%,#2A2420 40%,#1A1614 100%);
+    z-index:0; pointer-events:none;
+  }
+  body::after {
+    content:''; position:fixed; top:0;left:0;right:0;bottom:0;
+    background-image:
+      repeating-linear-gradient(45deg,transparent,transparent 40px,rgba(201,169,110,.015) 40px,rgba(201,169,110,.015) 41px),
+      repeating-linear-gradient(-45deg,transparent,transparent 40px,rgba(201,169,110,.015) 40px,rgba(201,169,110,.015) 41px);
+    z-index:0; pointer-events:none;
+  }
+
+  .container { position:relative; z-index:1; max-width:900px; margin:0 auto; padding:0 24px 60px; }
+
+  /* HEADER */
+  .header { text-align:center; padding:60px 0 48px; }
+  .header-ornament { display:flex; align-items:center; justify-content:center; gap:16px; margin-bottom:24px; opacity:0; animation:fadeUp .8s ease forwards .1s; }
+  .ornament-line { height:1px; width:80px; background:linear-gradient(90deg,transparent,var(--gold)); }
+  .ornament-line.right { background:linear-gradient(90deg,var(--gold),transparent); }
+  .ornament-diamond { width:6px; height:6px; background:var(--gold); transform:rotate(45deg); }
+  .header h1 { font-family:'Cormorant Garamond',serif; font-size:clamp(42px,8vw,72px); font-weight:300; letter-spacing:.12em; color:var(--cream); line-height:1; opacity:0; animation:fadeUp .8s ease forwards .2s; }
+  .header-subtitle { font-size:10px; letter-spacing:.35em; color:var(--gold); text-transform:uppercase; margin-top:12px; font-weight:400; opacity:0; animation:fadeUp .8s ease forwards .35s; }
+  .date-badge { display:inline-flex; align-items:center; gap:10px; margin-top:28px; padding:8px 20px; border:1px solid var(--divider); border-radius:2px; font-size:10px; letter-spacing:.25em; text-transform:uppercase; color:var(--gold-light); opacity:0; animation:fadeUp .8s ease forwards .45s; }
+
+  /* TABS */
+  .tabs { display:flex; margin-bottom:40px; border-bottom:1px solid var(--divider); opacity:0; animation:fadeUp .8s ease forwards .5s; overflow-x:auto; scrollbar-width:none; }
+  .tabs::-webkit-scrollbar { display:none; }
+  .tab { flex-shrink:0; padding:14px 28px; font-size:10px; letter-spacing:.3em; text-transform:uppercase; color:var(--warm-gray); cursor:pointer; transition:all .3s; border:none; border-bottom:2px solid transparent; margin-bottom:-1px; background:none; font-family:'Montserrat',sans-serif; white-space:nowrap; }
+  .tab:hover { color:var(--cream); }
+  .tab.active { color:var(--gold); border-bottom-color:var(--gold); }
+
+  .menu-section { display:none; }
+  .menu-section.active { display:block; }
+
+  /* CATEGORY */
+  .category { margin-bottom:44px; opacity:0; animation:fadeUp .6s ease forwards; }
+  .category:nth-child(1){animation-delay:.05s} .category:nth-child(2){animation-delay:.12s}
+  .category:nth-child(3){animation-delay:.19s} .category:nth-child(4){animation-delay:.26s}
+  .category:nth-child(5){animation-delay:.33s}
+  .category-header { display:flex; align-items:center; gap:16px; margin-bottom:20px; }
+  .category-title { font-family:'Cormorant Garamond',serif; font-size:13px; font-weight:500; letter-spacing:.35em; text-transform:uppercase; color:var(--gold); white-space:nowrap; }
+  .category-line { flex:1; height:1px; background:linear-gradient(90deg,var(--divider),transparent); }
+
+  /* STANDARD MENU ITEMS */
+  .menu-items { display:flex; flex-direction:column; }
+  .menu-item { display:flex; align-items:baseline; justify-content:space-between; padding:13px 0; border-bottom:1px solid rgba(201,169,110,.08); transition:all .25s; gap:12px; }
+  .menu-item:last-child { border-bottom:none; }
+  .menu-item:hover { padding-left:8px; }
+  .menu-item:hover .item-name { color:var(--cream); }
+  .item-name { font-family:'Cormorant Garamond',serif; font-size:18px; font-weight:400; color:var(--cream-dark); letter-spacing:.02em; line-height:1.3; flex:1; transition:color .25s; }
+  .item-desc { font-size:10px; letter-spacing:.05em; color:var(--warm-gray); margin-top:2px; font-style:italic; }
+  .vol { font-size:12px; color:var(--warm-gray); font-weight:300; margin-left:6px; }
+
+  /* TEA LIST */
+  .tea-list { display:grid; grid-template-columns:1fr 1fr; gap:0 32px; }
+
+  /* DRINK ADDONS */
+  .drink-addons { display:flex; flex-wrap:wrap; gap:8px; }
+  .drink-addon-pill { padding:6px 14px; border:1px solid var(--divider); border-radius:20px; font-family:'Cormorant Garamond',serif; font-size:14px; color:var(--warm-gray); transition:all .2s; }
+  .drink-addon-pill:hover { border-color:var(--gold); color:var(--gold-light); }
+
+  /* ADDONS GRID */
+  .addons-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(160px,1fr)); gap:8px; }
+  .addon-item { padding:10px 14px; border:1px solid rgba(201,169,110,.12); border-radius:2px; font-family:'Cormorant Garamond',serif; font-size:15px; color:var(--warm-gray); transition:all .25s; text-align:center; }
+  .addon-item:hover { border-color:rgba(201,169,110,.35); color:var(--cream); background:rgba(201,169,110,.04); }
+
+  /* ===== KOMPLEKS INTERACTIVE ===== */
+  .kompleks-note { background:linear-gradient(135deg,rgba(107,39,55,.15),rgba(107,39,55,.05)); border:1px solid rgba(107,39,55,.3); border-left:3px solid var(--burgundy-light); border-radius:2px; padding:16px 20px; margin-bottom:32px; font-size:10px; letter-spacing:.15em; color:var(--warm-gray); text-transform:uppercase; text-align:center; }
+
+  /* Choice cards */
+  .choice-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:10px; }
+
+  .choice-card {
+    position:relative;
+    border:1px solid rgba(201,169,110,.15);
+    border-radius:4px;
+    padding:14px 16px;
+    cursor:pointer;
+    transition:all .25s ease;
+    background:rgba(255,255,255,.02);
+    user-select:none;
+  }
+  .choice-card:hover {
+    border-color:rgba(201,169,110,.35);
+    background:rgba(255,255,255,.04);
+    transform:translateY(-1px);
+  }
+  .choice-card.selected {
+    border-color:var(--gold);
+    background:rgba(201,169,110,.08);
+    box-shadow:0 0 0 1px rgba(201,169,110,.2);
+  }
+  .choice-card.selected::after {
+    content:'✓';
+    position:absolute;
+    top:10px; right:12px;
+    color:var(--gold);
+    font-size:13px;
+    font-weight:500;
+  }
+
+  .choice-name {
+    font-family:'Cormorant Garamond',serif;
+    font-size:16px;
+    color:var(--cream-dark);
+    line-height:1.3;
+    padding-right:16px;
+  }
+  .choice-footnote {
+    font-size:9px;
+    color:var(--warm-gray);
+    font-style:italic;
+    margin-top:4px;
+    letter-spacing:.03em;
+  }
+  .choice-price {
+    margin-top:8px;
+    font-size:11px;
+    font-weight:500;
+    letter-spacing:.08em;
+    color:var(--gold);
+  }
+  .choice-price .original {
+    color:var(--warm-gray);
+    text-decoration:line-through;
+    margin-right:6px;
+    font-weight:300;
+  }
+
+  /* ИТОГО BAR */
+  #total-bar {
+    position:sticky;
+    bottom:16px;
+    z-index:50;
+    margin-top:32px;
+    transition:all .35s ease;
+  }
+
+  .total-inner {
+    background:linear-gradient(135deg,rgba(30,24,20,.97),rgba(42,32,24,.97));
+    border:1px solid var(--gold);
+    border-radius:6px;
+    padding:16px 20px;
+    backdrop-filter:blur(12px);
+    box-shadow:0 8px 32px rgba(0,0,0,.5);
+  }
+
+  .total-top {
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:10px;
+  }
+
+  .total-label {
+    font-size:9px;
+    letter-spacing:.3em;
+    text-transform:uppercase;
+    color:var(--warm-gray);
+  }
+
+  .total-reset {
+    font-size:9px;
+    letter-spacing:.1em;
+    color:var(--warm-gray);
+    cursor:pointer;
+    text-decoration:underline;
+    text-underline-offset:3px;
+    background:none;
+    border:none;
+    font-family:'Montserrat',sans-serif;
+  }
+  .total-reset:hover { color:var(--cream); }
+
+  .total-selected { margin-bottom:12px; }
+  .total-row {
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    padding:4px 0;
+    border-bottom:1px solid rgba(201,169,110,.08);
+    gap:8px;
+  }
+  .total-row:last-child { border-bottom:none; }
+  .total-row-name {
+    font-family:'Cormorant Garamond',serif;
+    font-size:14px;
+    color:var(--cream-dark);
+    flex:1;
+  }
+  .total-row-cat {
+    font-size:8px;
+    letter-spacing:.15em;
+    color:var(--warm-gray);
+    text-transform:uppercase;
+    margin-bottom:1px;
+  }
+  .total-row-price {
+    font-size:13px;
+    color:var(--warm-gray);
+    text-decoration:line-through;
+    white-space:nowrap;
+  }
+
+  .total-divider { height:1px; background:var(--divider); margin:10px 0; }
+
+  .total-bottom {
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+  }
+  .total-discount-badge {
+    font-size:9px;
+    letter-spacing:.15em;
+    text-transform:uppercase;
+    background:rgba(107,39,55,.4);
+    border:1px solid var(--burgundy-light);
+    border-radius:2px;
+    padding:3px 8px;
+    color:var(--gold-light);
+  }
+  .total-sum {
+    text-align:right;
+  }
+  .total-sum-original {
+    font-size:11px;
+    color:var(--warm-gray);
+    text-decoration:line-through;
+    letter-spacing:.05em;
+  }
+  .total-sum-final {
+    font-family:'Cormorant Garamond',serif;
+    font-size:28px;
+    font-weight:400;
+    color:var(--gold-light);
+    line-height:1;
+    letter-spacing:.02em;
+  }
+  .total-sum-cur {
+    font-size:14px;
+    margin-left:2px;
+  }
+
+  .total-hint {
+    margin-top:10px;
+    font-size:9px;
+    letter-spacing:.1em;
+    color:var(--warm-gray);
+    text-align:center;
+    font-style:italic;
+  }
+
+  /* FOOTER */
+  .footer { text-align:center; margin-top:60px; padding-top:32px; border-top:1px solid var(--divider); }
+  .footer-text { font-family:'Cormorant Garamond',serif; font-size:13px; color:var(--warm-gray); font-style:italic; letter-spacing:.05em; margin-top:12px; }
+  @keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+
+  ::-webkit-scrollbar{width:4px}
+  ::-webkit-scrollbar-track{background:transparent}
+  ::-webkit-scrollbar-thumb{background:var(--divider);border-radius:2px}
+
+  @media(max-width:600px){
+    .choice-grid{grid-template-columns:1fr 1fr}
+    .tea-list{grid-template-columns:1fr}
+    .tab{padding:12px 16px;font-size:9px}
+    .header h1{font-size:38px}
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="header">
+    <div class="header-ornament">
+      <div class="ornament-line"></div><div class="ornament-diamond"></div><div class="ornament-line right"></div>
+    </div>
+    <h1>МЕНЮ</h1>
+    <div class="header-subtitle">Добро пожаловать</div>
+    <div class="date-badge"><span>◆</span><span id="dateText"></span><span>◆</span></div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('kompleks',this)">Комплексное</button>
+    <button class="tab" onclick="switchTab('breakfast',this)">Завтраки</button>
+    <button class="tab" onclick="switchTab('drinks',this)">Напитки</button>
+  </div>
+
+  <!-- ===== КОМПЛЕКСНОЕ ===== -->
+  <div class="menu-section active" id="kompleks">
+    <div class="kompleks-note">✦ &nbsp; Выберите по одному блюду из каждой категории &nbsp; ✦</div>
+
+    <!-- САЛАТЫ -->
+    <div class="category">
+      <div class="category-header"><span class="category-title">Салат</span><div class="category-line"></div></div>
+      <div class="choice-grid" data-group="salat">
+        <div class="choice-card" onclick="select(this,'salat','Греческий',115)">
+          <div class="choice-name">Греческий</div>
+          <div class="choice-price"><span class="original">115 ₽</span>57 ₽</div>
+        </div>
+        <div class="choice-card" onclick="select(this,'salat','Столичный',44)">
+          <div class="choice-name">Столичный</div>
+          <div class="choice-price"><span class="original">44 ₽</span>22 ₽</div>
+        </div>
+        <div class="choice-card" onclick="select(this,'salat','С курицей и цуккини с соусом песто',158)">
+          <div class="choice-name">С курицей и цуккини</div>
+          <div class="choice-footnote">с соусом песто</div>
+          <div class="choice-price"><span class="original">158 ₽</span>79 ₽</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- СУПЫ -->
+    <div class="category">
+      <div class="category-header"><span class="category-title">Суп</span><div class="category-line"></div></div>
+      <div class="choice-grid" data-group="soup">
+        <div class="choice-card" onclick="select(this,'soup','Лапша куриная',22)">
+          <div class="choice-name">Лапша куриная</div>
+          <div class="choice-price"><span class="original">22 ₽</span>11 ₽</div>
+        </div>
+        <div class="choice-card" onclick="select(this,'soup','Щи с квашеной капустой с говядиной',78)">
+          <div class="choice-name">Щи с квашеной капустой</div>
+          <div class="choice-footnote">с говядиной</div>
+          <div class="choice-price"><span class="original">78 ₽</span>39 ₽</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ГОРЯЧЕЕ -->
+    <div class="category">
+      <div class="category-header"><span class="category-title">Горячее</span><div class="category-line"></div></div>
+      <div class="choice-grid" data-group="main">
+        <div class="choice-card" onclick="select(this,'main','Куриная отбивная',103)">
+          <div class="choice-name">Куриная отбивная</div>
+          <div class="choice-price"><span class="original">103 ₽</span>51 ₽</div>
+        </div>
+        <div class="choice-card" onclick="select(this,'main','Бифштекс с яйцом',148)">
+          <div class="choice-name">Бифштекс с яйцом</div>
+          <div class="choice-price"><span class="original">148 ₽</span>74 ₽</div>
+        </div>
+        <div class="choice-card" onclick="select(this,'main','Котлеты рыбные с соусом тар-тар',112)">
+          <div class="choice-name">Котлеты рыбные</div>
+          <div class="choice-footnote">с соусом тар-тар</div>
+          <div class="choice-price"><span class="original">112 ₽</span>56 ₽</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ГАРНИР -->
+    <div class="category">
+      <div class="category-header"><span class="category-title">Гарнир</span><div class="category-line"></div></div>
+      <div class="choice-grid" data-group="side">
+        <div class="choice-card" onclick="select(this,'side','Картофель мини запечённый',27)">
+          <div class="choice-name">Картофель мини запечённый</div>
+          <div class="choice-price"><span class="original">27 ₽</span>13 ₽</div>
+        </div>
+        <div class="choice-card" onclick="select(this,'side','Рис с овощами',47)">
+          <div class="choice-name">Рис с овощами</div>
+          <div class="choice-price"><span class="original">47 ₽</span>23 ₽</div>
+        </div>
+        <div class="choice-card" onclick="select(this,'side','Овощи на тепане',101)">
+          <div class="choice-name">Овощи на тепане</div>
+          <div class="choice-price"><span class="original">101 ₽</span>50 ₽</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ИТОГО BAR -->
+    <div id="total-bar" style="display:none">
+      <div class="total-inner">
+        <div class="total-top">
+          <span class="total-label">Ваш выбор</span>
+          <button class="total-reset" onclick="resetAll()">Сбросить</button>
+        </div>
+        <div class="total-selected" id="total-rows"></div>
+        <div class="total-divider"></div>
+        <div class="total-bottom">
+          <div class="total-discount-badge">Скидка 50%</div>
+          <div class="total-sum">
+            <div class="total-sum-original" id="total-original"></div>
+            <div class="total-sum-final" id="total-final"></div>
+          </div>
+        </div>
+        <div class="total-hint" id="total-hint"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== ЗАВТРАКИ ===== -->
+  <div class="menu-section" id="breakfast">
+    <div class="category">
+      <div class="category-header"><span class="category-title">Завтраки</span><div class="category-line"></div></div>
+      <div class="menu-items">
+        <div class="menu-item"><div><div class="item-name">Каша дня</div><div class="item-desc">Уточнять у официанта</div></div></div>
+        <div class="menu-item"><div><div class="item-name">Омлет</div><div class="item-desc">С миксом салата и черри</div></div></div>
+        <div class="menu-item"><div><div class="item-name">Скрэмбл</div><div class="item-desc">С миксом салата и черри</div></div></div>
+        <div class="menu-item"><div><div class="item-name">Яичница из 3-х яиц</div><div class="item-desc">С миксом салата и черри</div></div></div>
+        <div class="menu-item"><div><div class="item-name">Тост с форелью с/с и яйцом пашот</div></div></div>
+        <div class="menu-item"><div><div class="item-name">Сырники со сметаной</div></div></div>
+      </div>
+    </div>
+    <div class="category">
+      <div class="category-header"><span class="category-title">Добавки к завтракам</span><div class="category-line"></div></div>
+      <div class="addons-grid">
+        <div class="addon-item">Бекон говяжий</div><div class="addon-item">Бекон свиной</div>
+        <div class="addon-item">Охотничьи колбаски</div><div class="addon-item">Лук красный</div>
+        <div class="addon-item">Пастрами из курицы</div><div class="addon-item">Перец сладкий</div>
+        <div class="addon-item">Помидоры</div><div class="addon-item">Помидоры черри</div>
+        <div class="addon-item">Рваная говядина</div><div class="addon-item">Микс салата</div>
+        <div class="addon-item">Свежий огурец</div><div class="addon-item">Сыр пармезан</div>
+        <div class="addon-item">Тостовый хлеб</div><div class="addon-item">Форель с/с</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== НАПИТКИ ===== -->
+  <div class="menu-section" id="drinks">
+    <div class="category">
+      <div class="category-header"><span class="category-title">Кофе</span><div class="category-line"></div></div>
+      <div class="menu-items">
+        <div class="menu-item"><div class="item-name">Эспрессо <span class="vol">60 мл</span></div></div>
+        <div class="menu-item"><div class="item-name">Американо <span class="vol">200 мл</span></div></div>
+        <div class="menu-item"><div class="item-name">Капучино <span class="vol">200 / 300 мл</span></div></div>
+        <div class="menu-item"><div class="item-name">Латте <span class="vol">200 мл</span></div></div>
+        <div class="menu-item"><div class="item-name">Флэт Уайт <span class="vol">200 мл</span></div></div>
+        <div class="menu-item"><div class="item-name">Раф <span class="vol">300 мл</span></div></div>
+        <div class="menu-item"><div class="item-name">Фисташковый раф <span class="vol">300 мл</span></div></div>
+        <div class="menu-item"><div class="item-name">Раф халва <span class="vol">300 мл</span></div></div>
+        <div class="menu-item"><div class="item-name">Какао <span class="vol">300 мл</span></div></div>
+      </div>
+    </div>
+
+    <div class="category">
+      <div class="category-header"><span class="category-title">Чай</span><div class="category-line"></div></div>
+      <div class="tea-list">
+        <div class="menu-item"><div class="item-name">Ассам <span class="vol">500 мл</span></div></div>
+        <div class="menu-item"><div class="item-name">Эрл Грей <span class="vol">500 мл</span></div></div>
+        <div class="menu-item"><div class="item-name">Сенча <span class="vol">500 мл</span></div></div>
+        <div class="menu-item"><div class="item-name">Жасмин <span class="vol">500 мл</span></div></div>
+        <div class="menu-item"><div class="item-name">Тегуаньинь <span class="vol">500 мл</span></div></div>
+        <div class="menu-item"><div class="item-name">Травяной <span class="vol">500 мл</span></div></div>
+        <div class="menu-item"><div class="item-name">Саган Дайля <span class="vol">500 мл</span></div></div>
+        <div class="menu-item"><div class="item-name">Пуэр Юньнань <span class="vol">500 мл</span></div></div>
+        <div class="menu-item"><div class="item-name">Молочный улун <span class="vol">500 мл</span></div></div>
+      </div>
+    </div>
+
+    <div class="category">
+      <div class="category-header"><span class="category-title">Добавки к чаю</span><div class="category-line"></div></div>
+      <div class="drink-addons">
+        <div class="drink-addon-pill">Лимон</div><div class="drink-addon-pill">Мёд</div>
+        <div class="drink-addon-pill">Имбирь</div><div class="drink-addon-pill">Мята</div>
+        <div class="drink-addon-pill">Чабрец</div>
+      </div>
+    </div>
+
+    <div class="category">
+      <div class="category-header"><span class="category-title">Лимонады</span><div class="category-line"></div></div>
+      <div class="menu-items">
+        <div class="menu-item"><div class="item-name">Манго-маракуйя <span class="vol">300 мл</span></div></div>
+        <div class="menu-item"><div class="item-name">Малина-маракуйя <span class="vol">300 мл</span></div></div>
+        <div class="menu-item"><div class="item-name">Гранат-малина <span class="vol">300 мл</span></div></div>
+        <div class="menu-item"><div class="item-name">Мохито классический <span class="vol">300 мл</span></div></div>
+        <div class="menu-item"><div class="item-name">Мохито клубничный <span class="vol">300 мл</span></div></div>
+        <div class="menu-item"><div class="item-name">Голубое миндальное яблоко <span class="vol">300 мл</span></div></div>
+        <div class="menu-item"><div class="item-name">Каламанси-арбуз <span class="vol">300 мл</span></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="footer">
+    <div class="header-ornament" style="opacity:1;animation:none">
+      <div class="ornament-line"></div><div class="ornament-diamond"></div><div class="ornament-line right"></div>
+    </div>
+    <div class="footer-text">Приятного аппетита</div>
+  </div>
+
+</div>
+
+<script>
+  // Date
+  const months=['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
+  const now=new Date();
+  document.getElementById('dateText').textContent=`${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()}`;
+
+  // Tab switching
+  function switchTab(id,tab){
+    document.querySelectorAll('.menu-section').forEach(s=>s.classList.remove('active'));
+    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    tab.classList.add('active');
+    document.getElementById(id).querySelectorAll('.category').forEach((c,i)=>{
+      c.style.animation='none'; c.style.opacity='0';
+      requestAnimationFrame(()=>{ c.style.animation=''; c.style.animationDelay=(i*.07)+'s'; });
+    });
+  }
+
+  // ===== KOMPLEKS LOGIC =====
+  const GROUPS = { salat:'Салат', soup:'Суп', main:'Горячее', side:'Гарнир' };
+  const selected = {};
+
+  function select(card, group, name, price) {
+    // Deselect others in group
+    document.querySelectorAll(`[data-group="${group}"] .choice-card`).forEach(c=>c.classList.remove('selected'));
+    // Toggle
+    if(selected[group] && selected[group].name === name) {
+      delete selected[group];
+    } else {
+      card.classList.add('selected');
+      selected[group] = { name, price };
+    }
+    updateTotal();
+  }
+
+  function updateTotal() {
+    const bar = document.getElementById('total-bar');
+    const keys = Object.keys(selected);
+    if(keys.length === 0) { bar.style.display='none'; return; }
+
+    bar.style.display='block';
+
+    let original = 0;
+    let rowsHtml = '';
+    const ORDER = ['salat','soup','main','side'];
+    ORDER.forEach(g => {
+      if(!selected[g]) return;
+      const {name, price} = selected[g];
+      original += price;
+      rowsHtml += `
+        <div class="total-row">
+          <div>
+            <div class="total-row-cat">${GROUPS[g]}</div>
+            <div class="total-row-name">${name}</div>
+          </div>
+          <div class="total-row-price">${price} ₽</div>
+        </div>`;
+    });
+
+    const final = Math.round(original * 0.5);
+    document.getElementById('total-rows').innerHTML = rowsHtml;
+    document.getElementById('total-original').textContent = original + ' ₽';
+    document.getElementById('total-final').innerHTML = final + ' <span class="total-sum-cur">₽</span>';
+
+    const missing = Object.keys(GROUPS).filter(g => !selected[g]);
+    if(missing.length > 0) {
+      const names = missing.map(g => GROUPS[g].toLowerCase()).join(', ');
+      document.getElementById('total-hint').textContent = `Ещё не выбрано: ${names}`;
+    } else {
+      document.getElementById('total-hint').textContent = 'Полный комплекс выбран ✦';
+    }
+  }
+
+  function resetAll() {
+    Object.keys(selected).forEach(k => delete selected[k]);
+    document.querySelectorAll('.choice-card').forEach(c=>c.classList.remove('selected'));
+    document.getElementById('total-bar').style.display='none';
+  }
+</script>
+</body>
+</html>
