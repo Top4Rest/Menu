@@ -1,0 +1,1113 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Меню</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Montserrat:wght@300;400;500&display=swap');
+  :root {
+    --burgundy: #6B2737;
+    --burgundy-light: #8B3A4A;
+    --cream: #F5F0E8;
+    --cream-dark: #EDE6D6;
+    --gold: #C9A96E;
+    --gold-light: #E2C88A;
+    --charcoal: #2A2420;
+    --warm-gray: #8A8078;
+    --divider: rgba(201,169,110,0.3);
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html { background-color:#2A2420 !important; }
+
+  body {
+    font-family:'Montserrat', Arial, sans-serif;
+    background-color:#2A2420 !important;
+    background:#2A2420 !important;
+    color:#F5F0E8;
+    min-height:100vh;
+    overflow-x:hidden;
+  }
+
+  body::before {
+    content:''; position:fixed; top:0;left:0;right:0;bottom:0;
+    background:
+      radial-gradient(ellipse at 20% 20%, rgba(107,39,55,.15) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 80%, rgba(107,39,55,.10) 0%, transparent 60%),
+      linear-gradient(160deg,#1E1A18 0%,#2A2420 40%,#1A1614 100%);
+    z-index:0; pointer-events:none;
+  }
+  body::after {
+    content:''; position:fixed; top:0;left:0;right:0;bottom:0;
+    background-image:
+      repeating-linear-gradient(45deg,transparent,transparent 40px,rgba(201,169,110,.015) 40px,rgba(201,169,110,.015) 41px),
+      repeating-linear-gradient(-45deg,transparent,transparent 40px,rgba(201,169,110,.015) 40px,rgba(201,169,110,.015) 41px);
+    z-index:0; pointer-events:none;
+  }
+
+  .container { position:relative; z-index:1; max-width:900px; margin:0 auto; padding:0 24px 60px; }
+
+  /* HEADER */
+  .header { text-align:center; padding:60px 0 48px; }
+  .header-ornament { display:flex; align-items:center; justify-content:center; gap:16px; margin-bottom:24px; opacity:0; animation:fadeUp .8s ease forwards .1s; }
+  .ornament-line { height:1px; width:80px; background:linear-gradient(90deg,transparent,var(--gold)); }
+  .ornament-line.right { background:linear-gradient(90deg,var(--gold),transparent); }
+  .ornament-diamond { width:6px; height:6px; background:var(--gold); transform:rotate(45deg); }
+  .header h1 { font-family:'Cormorant Garamond',serif; font-size:clamp(42px,8vw,72px); font-weight:300; letter-spacing:.12em; color:var(--cream); line-height:1; opacity:0; animation:fadeUp .8s ease forwards .2s; }
+  .header-subtitle { font-size:12px; letter-spacing:.35em; color:var(--gold); text-transform:uppercase; margin-top:12px; font-weight:400; opacity:0; animation:fadeUp .8s ease forwards .35s; }
+  .date-badge { display:inline-flex; align-items:center; gap:10px; margin-top:28px; padding:8px 20px; border:1px solid var(--divider); border-radius:2px; font-size:12px; letter-spacing:.25em; text-transform:uppercase; color:var(--gold-light); opacity:0; animation:fadeUp .8s ease forwards .45s; }
+
+  /* TABS */
+  .tabs { display:flex; margin-bottom:40px; border-bottom:1px solid var(--divider); opacity:0; animation:fadeUp .8s ease forwards .5s; overflow-x:auto; scrollbar-width:none; }
+  .tabs::-webkit-scrollbar { display:none; }
+  .tab { flex-shrink:0; padding:14px 28px; font-size:11px; letter-spacing:.3em; text-transform:uppercase; color:var(--warm-gray); cursor:pointer; transition:all .3s; border:none; border-bottom:2px solid transparent; margin-bottom:-1px; background:none; font-family:'Montserrat',sans-serif; white-space:nowrap; }
+  .tab:hover { color:var(--cream); }
+  .tab.active { color:var(--gold); border-bottom-color:var(--gold); }
+
+  .menu-section { display:none; }
+  .menu-section.active { display:block; }
+
+  /* CATEGORY */
+  .category { margin-bottom:44px; opacity:0; animation:fadeUp .6s ease forwards; }
+  .category:nth-child(1){animation-delay:.05s} .category:nth-child(2){animation-delay:.12s}
+  .category:nth-child(3){animation-delay:.19s} .category:nth-child(4){animation-delay:.26s}
+  .category:nth-child(5){animation-delay:.33s}
+  .category-header { display:flex; align-items:center; gap:16px; margin-bottom:20px; }
+  .category-title { font-family:'Cormorant Garamond',serif; font-size:15px; font-weight:500; letter-spacing:.35em; text-transform:uppercase; color:var(--gold); white-space:nowrap; }
+  .category-line { flex:1; height:1px; background:linear-gradient(90deg,var(--divider),transparent); }
+
+  /* STANDARD MENU ITEMS */
+  .menu-items { display:flex; flex-direction:column; }
+  .menu-item { display:flex; align-items:baseline; justify-content:space-between; padding:13px 0; border-bottom:1px solid rgba(201,169,110,.08); transition:all .25s; gap:12px; }
+  .menu-item:last-child { border-bottom:none; }
+  .menu-item:hover .item-name { color:var(--cream); }
+  .item-name { font-family:'Cormorant Garamond',serif; font-size:22px; font-weight:400; color:var(--cream-dark); letter-spacing:.02em; line-height:1.3; flex:1; transition:color .25s; }
+
+  .item-desc { font-size:13px; letter-spacing:.05em; color:var(--warm-gray); margin-top:2px; font-style:italic; }
+  .vol { font-size:13px; color:var(--warm-gray); font-weight:300; white-space:nowrap; }
+  .item-price { display:inline-flex; align-items:baseline; gap:6px; white-space:nowrap; }
+  .item-price .orig { font-size:14px; color:var(--warm-gray); text-decoration:line-through; font-weight:300; }
+  .item-price .disc { font-family:'Montserrat',sans-serif; font-size:14px; color:var(--gold); font-weight:500; letter-spacing:.06em; }
+  .addon-price { display:block; margin-top:3px; }
+  .addon-price .orig { font-size:12px; color:var(--warm-gray); text-decoration:line-through; font-weight:300; margin-right:4px; }
+  .addon-price .disc { font-size:12px; color:var(--gold); font-weight:500; }
+
+  /* TEA LIST */
+  .tea-list { display:grid; grid-template-columns:1fr 1fr; gap:0 32px; }
+
+  /* DRINK ADDONS */
+  .drink-addons { display:flex; flex-wrap:wrap; gap:8px; }
+  .drink-addon-pill { padding:8px 16px; border:1px solid var(--divider); border-radius:20px; font-family:'Cormorant Garamond',serif; font-size:17px; color:var(--warm-gray); transition:all .2s; }
+  .drink-addon-pill:hover { border-color:var(--gold); color:var(--gold-light); }
+
+  /* ADDONS GRID */
+  .addons-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(160px,1fr)); gap:8px; margin-bottom:4px; }
+  .addon-item { padding:10px 14px; border:1px solid rgba(201,169,110,.12); border-radius:2px; font-family:'Cormorant Garamond',serif; font-size:15px; color:var(--warm-gray); transition:all .25s; text-align:center; }
+  .addon-item:hover { border-color:rgba(201,169,110,.35); color:var(--cream); background:rgba(201,169,110,.04); }
+
+  /* ===== KOMPLEKS INTERACTIVE ===== */
+  .kompleks-note { background:linear-gradient(135deg,rgba(107,39,55,.15),rgba(107,39,55,.05)); border:1px solid rgba(107,39,55,.3); border-left:3px solid var(--burgundy-light); border-radius:2px; padding:16px 20px; margin-bottom:32px; font-size:12px; letter-spacing:.15em; color:var(--warm-gray); text-transform:uppercase; text-align:center; }
+
+  /* Choice cards */
+  .choice-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:10px; }
+
+  .choice-card {
+    position:relative;
+    border:1px solid rgba(201,169,110,.15);
+    border-radius:4px;
+    padding:14px 16px;
+    cursor:pointer;
+    transition:all .25s ease;
+    background:rgba(255,255,255,.02);
+    user-select:none;
+  }
+  .choice-card:hover {
+    border-color:rgba(201,169,110,.35);
+    background:rgba(255,255,255,.04);
+    transform:translateY(-1px);
+  }
+  .choice-card.selected {
+    border-color:var(--gold);
+    background:rgba(201,169,110,.08);
+    box-shadow:0 0 0 1px rgba(201,169,110,.2);
+  }
+  .choice-card.selected::after {
+    content:'✓';
+    position:absolute;
+    top:10px; right:12px;
+    color:var(--gold);
+    font-size:13px;
+    font-weight:500;
+  }
+
+  .choice-name {
+    font-family:'Cormorant Garamond',serif;
+    font-size:19px;
+    color:var(--cream-dark);
+    line-height:1.3;
+    padding-right:16px;
+  }
+  .choice-footnote {
+    font-size:12px;
+    color:var(--warm-gray);
+    font-style:italic;
+    margin-top:4px;
+    letter-spacing:.03em;
+  }
+  .choice-price {
+    margin-top:8px;
+    font-family:'Montserrat',sans-serif;
+    font-size:14px;
+    font-weight:500;
+    letter-spacing:.06em;
+    color:var(--gold);
+  }
+  .choice-price .original {
+    color:var(--warm-gray);
+    text-decoration:line-through;
+    margin-right:6px;
+    font-weight:300;
+    font-size:12px;
+  }
+
+
+
+
+
+  /* SELECTABLE PILLS */
+  .pill-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .sel-pill {
+    padding: 10px 16px;
+    border: 1px solid var(--divider);
+    border-radius: 20px;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 17px;
+    color: var(--warm-gray);
+    cursor: pointer;
+    transition: all .25s;
+    user-select: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    text-align: center;
+  }
+  .sel-pill:hover {
+    border-color: var(--gold);
+    color: var(--gold-light);
+  }
+  .sel-pill.selected {
+    border-color: var(--gold);
+    background: rgba(201,169,110,.08);
+    color: var(--cream);
+  }
+  .pill-price {
+    display: none;
+    gap: 4px;
+    align-items: baseline;
+    white-space: nowrap;
+  }
+  .sel-pill.selected .pill-price {
+    display: inline-flex;
+  }
+  .pill-price .orig { font-size: 11px; color: var(--warm-gray); text-decoration: line-through; font-weight:300; }
+  .pill-price .disc { font-family:'Montserrat',sans-serif; font-size:13px; color:var(--gold); font-weight:500; letter-spacing:.06em; }
+
+  /* SELECTABLE MENU ITEMS */
+  .sel-item {
+    cursor: pointer;
+    position: relative;
+    transition: background .2s;
+    border-radius: 2px;
+    padding-left: 0 !important;
+  }
+  .sel-item:hover {
+    background: rgba(201,169,110,.04);
+  }
+  .sel-item.selected {
+    background: rgba(201,169,110,.09);
+    border-bottom-color: rgba(201,169,110,.2) !important;
+  }
+  .sel-item.selected::before {
+    content: '✓';
+    position: absolute;
+    right: 4px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--gold);
+    font-size: 13px;
+  }
+
+
+  .choice-sub { display:flex; align-items:baseline; gap:8px; margin-top:4px; }
+  .choice-sub .vol { font-size:13px; color:var(--warm-gray); font-weight:300; }
+
+
+
+
+
+
+
+
+  /* === ЕДИНЫЙ СТИЛЬ БЛЮД === */
+  .menu-item { position:relative; }
+  .dish-row { display:block; padding-right:80px; }
+  .dish-title { font-family:'Cormorant Garamond',serif; font-size:22px; font-weight:400; color:var(--cream-dark); letter-spacing:.02em; line-height:1.3; transition:color .25s; display:inline; }
+  .dish-vol { font-size:13px; color:var(--warm-gray); font-weight:300; margin-left:6px; white-space:nowrap; }
+  .dish-title2 { font-family:'Cormorant Garamond',serif; font-size:22px; font-weight:400; color:var(--cream-dark); letter-spacing:.02em; line-height:1.3; display:block; margin-top:0; }
+  .dish-right { position:absolute; top:13px; right:0; white-space:nowrap; }
+  .dish-right .vol { display:none; }
+  .dish-right .item-price { margin:0; }
+  .dish-right .disc { font-family:'Montserrat',sans-serif; font-size:14px; color:var(--gold); font-weight:500; letter-spacing:.06em; }
+
+  /* ИТОГО BAR */
+  #total-bar {
+    position:sticky;
+    bottom:16px;
+    z-index:50;
+    margin-top:32px;
+    transition:all .35s ease;
+  }
+
+  .total-inner {
+    background:linear-gradient(135deg,rgba(30,24,20,.97),rgba(42,32,24,.97));
+    border:1px solid var(--gold);
+    border-radius:6px;
+    padding:16px 20px;
+    backdrop-filter:blur(12px);
+    box-shadow:0 8px 32px rgba(0,0,0,.5);
+  }
+
+  .total-top {
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:10px;
+  }
+
+  .total-label {
+    font-size:11px;
+    letter-spacing:.3em;
+    text-transform:uppercase;
+    color:var(--warm-gray);
+  }
+
+  .total-reset {
+    font-size:11px;
+    letter-spacing:.1em;
+    color:var(--warm-gray);
+    cursor:pointer;
+    text-decoration:underline;
+    text-underline-offset:3px;
+    background:none;
+    border:none;
+    font-family:'Montserrat',sans-serif;
+  }
+  .total-reset:hover { color:var(--cream); }
+
+  .total-selected { margin-bottom:12px; }
+  .total-row {
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    padding:4px 0;
+    border-bottom:1px solid rgba(201,169,110,.08);
+    gap:8px;
+  }
+  .total-row:last-child { border-bottom:none; }
+  .total-row-name {
+    font-family:'Cormorant Garamond',serif;
+    font-size:17px;
+    color:var(--cream-dark);
+    flex:1;
+  }
+  .total-row-cat {
+    font-size:11px;
+    letter-spacing:.15em;
+    color:var(--warm-gray);
+    text-transform:uppercase;
+    margin-bottom:1px;
+  }
+  .total-row-price {
+    font-size:15px;
+    color:var(--warm-gray);
+    text-decoration:line-through;
+    white-space:nowrap;
+  }
+
+  .total-divider { height:1px; background:var(--divider); margin:10px 0; }
+
+  .total-bottom {
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+  }
+  .total-discount-badge {
+    font-size:11px;
+    letter-spacing:.15em;
+    text-transform:uppercase;
+    background:rgba(107,39,55,.4);
+    border:1px solid var(--burgundy-light);
+    border-radius:2px;
+    padding:3px 8px;
+    color:var(--gold-light);
+  }
+  .total-sum {
+    text-align:right;
+  }
+  .total-sum-original {
+    font-size:11px;
+    color:var(--warm-gray);
+    text-decoration:line-through;
+    letter-spacing:.05em;
+  }
+  .total-sum-final {
+    font-family:'Cormorant Garamond',serif;
+    font-size:28px;
+    font-weight:400;
+    color:var(--gold-light);
+    line-height:1;
+    letter-spacing:.02em;
+  }
+  .total-sum-cur {
+    font-size:14px;
+    margin-left:2px;
+  }
+
+  .total-hint {
+    margin-top:10px;
+    font-size:11px;
+    letter-spacing:.1em;
+    color:var(--warm-gray);
+    text-align:center;
+    font-style:italic;
+  }
+
+  /* FOOTER */
+  .footer { text-align:center; margin-top:60px; padding-top:32px; border-top:1px solid var(--divider); }
+  .footer-text { font-family:'Cormorant Garamond',serif; font-size:13px; color:var(--warm-gray); font-style:italic; letter-spacing:.05em; margin-top:12px; }
+  @keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+
+  ::-webkit-scrollbar{width:4px}
+  ::-webkit-scrollbar-track{background:transparent}
+  ::-webkit-scrollbar-thumb{background:var(--divider);border-radius:2px}
+
+  @media(max-width:600px){
+    .choice-grid{grid-template-columns:1fr 1fr}
+    .tea-list{grid-template-columns:1fr}
+    .tab{padding:12px 16px;font-size:9px}
+    .header h1{font-size:38px}
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="header">
+    <div class="header-ornament">
+      <div class="ornament-line"></div><div class="ornament-diamond"></div><div class="ornament-line right"></div>
+    </div>
+    <h1>МЕНЮ</h1>
+    <div class="header-subtitle">Добро пожаловать</div>
+    <div class="date-badge"><span>◆</span><span id="dateText"></span><span>◆</span></div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('kompleks',this)">Комплексное</button>
+    <button class="tab" onclick="switchTab('breakfast',this)">Основное меню</button>
+    <button class="tab" onclick="switchTab('drinks',this)">Напитки</button>
+  </div>
+
+  <!-- ===== КОМПЛЕКСНОЕ ===== -->
+  <div class="menu-section active" id="kompleks">
+    <div class="kompleks-note">✦ &nbsp; Выберите по одному блюду из каждой категории &nbsp; ✦</div>
+
+    <div class="category">
+      <div class="category-header"><span class="category-title">Салат</span><div class="category-line"></div></div>
+      <div class="choice-grid" data-group="salat">
+        <div class="choice-card" onclick="select(this,'salat','Салат греческий',142)">
+          <div class="choice-name">Греческий</div>
+          <div class="choice-footnote">Помидоры, огурцы, перец, маслины, сыр фета, оливковое масло, орегано</div>
+          <div class="choice-price">142 ₽</div>
+        </div>
+        <div class="choice-card" onclick="select(this,'salat','Салат Андалузский с курицей',94)">
+          <div class="choice-name">Андалузский</div>
+          <div class="choice-footnote">Пастрами куриное, салат айсберг, помидоры, перец, чипсы из тортильи с паприкой, петрушка, укроп, соус андалузский (майонез, карри, соевый соус)</div>
+          <div class="choice-price">94 ₽</div>
+        </div>
+        <div class="choice-card" onclick="select(this,'salat','Морковь по-корейски',60)">
+          <div class="choice-name">Морковь по-корейски</div>
+          <div class="choice-footnote">Морковь, соевый соус, лимонный сок, сахар, кунжут, чеснок</div>
+          <div class="choice-price">60 ₽</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="category">
+      <div class="category-header"><span class="category-title">Суп</span><div class="category-line"></div></div>
+      <div class="choice-grid" data-group="soup">
+        <div class="choice-card" onclick="select(this,'soup','Лапша куриная',27)">
+          <div class="choice-name">Лапша куриная</div>
+          <div class="choice-footnote">Куриный бульон, вермишель, курица, петрушка</div>
+          <div class="choice-price">27 ₽</div>
+        </div>
+        <div class="choice-card" onclick="select(this,'soup','Борщ с говядиной',105)">
+          <div class="choice-name">Борщ с говядиной</div>
+          <div class="choice-footnote">Говядина, капуста, морковь, лук, картофель, свекла, томатная паста, сахар, уксус столовый</div>
+          <div class="choice-price">105 ₽</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="category">
+      <div class="category-header"><span class="category-title">Горячее</span><div class="category-line"></div></div>
+      <div class="choice-grid" data-group="main">
+        <div class="choice-card" onclick="select(this,'main','Куриный шашлык',86)">
+          <div class="choice-name">Куриный шницель</div>
+          <div class="choice-footnote">Куриное филе, куриное бедро, сыр</div>
+          <div class="choice-price">86 ₽</div>
+        </div>
+        <div class="choice-card" onclick="select(this,'main','Тефтели из говядины',98)">
+          <div class="choice-name">Тефтели из говядины</div>
+          <div class="choice-footnote">Говядина, лук, рис, мука, морковь, томатная паста, томаты в собственном соку, сахар, орегано</div>
+          <div class="choice-price">98 ₽</div>
+        </div>
+        <div class="choice-card" onclick="select(this,'main','Рыба под маринадом',242)">
+          <div class="choice-name">Рыба под маринадом</div>
+          <div class="choice-footnote">Минтай, лук, морковь, томатная паста, уксус винный, сахар</div>
+          <div class="choice-price">242 ₽</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="category">
+      <div class="category-header"><span class="category-title">Гарнир</span><div class="category-line"></div></div>
+      <div class="choice-grid" data-group="side">
+        <div class="choice-card" onclick="select(this,'side','Булгур с овощами и грибами',59)">
+          <div class="choice-name">Булгур с овощами и грибами</div>
+          <div class="choice-footnote">Булгур, куркума, болгарский перец, цуккини, баклажан, шампиньоны</div>
+          <div class="choice-price">59 ₽</div>
+        </div>
+        <div class="choice-card" onclick="select(this,'side','Запечённый мини картофель',34)">
+          <div class="choice-name">Запечённый мини картофель</div>
+          <div class="choice-footnote">Картофель бейби, прованские травы, растительное масло</div>
+          <div class="choice-price">34 ₽</div>
+        </div>
+        <div class="choice-card" onclick="select(this,'side','Овощи гриль',163)">
+          <div class="choice-name">Овощи гриль</div>
+          <div class="choice-footnote">Болгарский перец, цуккини, баклажан, шампиньоны</div>
+          <div class="choice-price">163 ₽</div>
+        </div>
+      </div>
+    </div>
+
+        <!-- ИТОГО BAR -->
+    <div id="total-bar" style="display:none">
+      <div class="total-inner">
+        <div class="total-top">
+          <span class="total-label">Ваш выбор</span>
+          <button class="total-reset" onclick="resetAll()">Сбросить</button>
+        </div>
+        <div class="total-selected" id="total-rows"></div>
+        <div class="total-divider"></div>
+        <div class="total-bottom">
+          
+          <div class="total-sum">
+            <div class="total-sum-original" id="total-original"></div>
+            <div class="total-sum-final" id="total-final"></div>
+          </div>
+        </div>
+        <div class="total-hint" id="total-hint"></div>
+      </div>
+    </div>
+
+
+
+
+
+
+  </div>
+
+  <!-- ===== ОСНОВНОЕ МЕНЮ ===== -->
+  <div class="menu-section" id="breakfast">
+
+    <!-- ЗАВТРАКИ -->
+    <div class="category">
+      <div class="category-header"><span class="category-title">Завтраки</span><div class="category-line"></div></div>
+      <div class="menu-items" data-group2="zavtrak" data-multi="true">
+        <div class="menu-item sel-item" onclick="selectItem(this,'zavtrak','Каша дня с ягодами',54)">
+          <div><div class="dish-row"><span class="dish-title">Каша дня</span><span class="dish-vol">300 г</span><div class="dish-right"><span class="item-price"><span class="disc">54 ₽</span></span></div></div>
+          <div class="dish-title2">с ягодами</div>
+          <div class="item-desc">Уточнять у официанта</div></div>
+        </div>
+        <div class="menu-item sel-item" onclick="selectItem(this,'zavtrak','Омлет',76)">
+          <div><div class="dish-row"><span class="dish-title">Омлет</span><span class="dish-vol">250 г</span><div class="dish-right"><span class="item-price"><span class="disc">76 ₽</span></span></div></div>
+          <div class="item-desc">С миксом салата и черри</div></div>
+        </div>
+        <div class="menu-item sel-item" onclick="selectItem(this,'zavtrak','Скрэмбл',76)">
+          <div><div class="dish-row"><span class="dish-title">Скрэмбл</span><span class="dish-vol">250 г</span><div class="dish-right"><span class="item-price"><span class="disc">76 ₽</span></span></div></div>
+          <div class="item-desc">С миксом салата и черри</div></div>
+        </div>
+        <div class="menu-item sel-item" onclick="selectItem(this,'zavtrak','Яичница из 3-х яиц',76)">
+          <div><div class="dish-row"><span class="dish-title">Яичница из 3-х яиц</span><span class="dish-vol">220 г</span><div class="dish-right"><span class="item-price"><span class="disc">76 ₽</span></span></div></div>
+          <div class="item-desc">С миксом салата и черри</div></div>
+        </div>
+        <div class="menu-item sel-item" onclick="selectItem(this,'zavtrak','Тост с форелью с/с и яйцом пашот',219)">
+          <div><div class="dish-row"><span class="dish-title">Тост с форелью с/с</span><span class="dish-vol">230 г</span><div class="dish-right"><span class="item-price"><span class="disc">219 ₽</span></span></div></div>
+          <div class="dish-title2">и яйцом пашот</div>
+          <div class="item-desc">Тост ржаной, соус гуакамоле (авокадо, сок лимона, перец чили), руккола, яйцо пашот, форель с/с, голландский соус (желтки яичные, сок лимона, сливочное масло)</div></div>
+        </div>
+        <div class="menu-item sel-item" onclick="selectItem(this,'zavtrak','Сырники со сметаной',112)">
+          <div><div class="dish-row"><span class="dish-title">Сырники со сметаной</span><span class="dish-vol">150 г</span><div class="dish-right"><span class="item-price"><span class="disc">112 ₽</span></span></div></div></div>
+        </div>
+        <div class="menu-item sel-item" onclick="selectItem(this,'zavtrak','Сэндвич с куриным пастрами',145)">
+          <div><div class="dish-row"><span class="dish-title">Сэндвич</span><span class="dish-vol">215 г</span><div class="dish-right"><span class="item-price"><span class="disc">145 ₽</span></span></div></div>
+          <div class="dish-title2">с куриным пастрами</div>
+          <div class="item-desc">Тостовый хлеб, масло сливочное, помидоры, салат айсберг, соус цезарь, куриное пастрами, сыр пармезан</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ДОБАВКИ -->
+    <div class="category">
+      <div class="category-header"><span class="category-title">Добавки к завтракам</span><div class="category-line"></div></div>
+      <div class="pill-grid" data-group2="addons" data-multi="true">
+        <div class="sel-pill" onclick="selectItem(this,'addons','Бекон говяжий',63)">Бекон говяжий<span class="pill-price"><span class="disc">63 ₽</span></span></div>
+        <div class="sel-pill" onclick="selectItem(this,'addons','Бекон свиной',24)">Бекон свиной<span class="pill-price"><span class="disc">24 ₽</span></span></div>
+        <div class="sel-pill" onclick="selectItem(this,'addons','Охотничья колбаска',31)">Охотничья колбаска<span class="pill-price"><span class="disc">31 ₽</span></span></div>
+        <div class="sel-pill" onclick="selectItem(this,'addons','Куриное пастрами',24)">Куриное пастрами<span class="pill-price"><span class="disc">24 ₽</span></span></div>
+        <div class="sel-pill" onclick="selectItem(this,'addons','Перец сладкий',33)">Перец сладкий<span class="pill-price"><span class="disc">33 ₽</span></span></div>
+        <div class="sel-pill" onclick="selectItem(this,'addons','Помидоры',27)">Помидоры<span class="pill-price"><span class="disc">27 ₽</span></span></div>
+        <div class="sel-pill" onclick="selectItem(this,'addons','Помидоры черри',50)">Помидоры черри<span class="pill-price"><span class="disc">50 ₽</span></span></div>
+        <div class="sel-pill" onclick="selectItem(this,'addons','Рваная говядина',107)">Рваная говядина<span class="pill-price"><span class="disc">107 ₽</span></span></div>
+        <div class="sel-pill" onclick="selectItem(this,'addons','Микс салата',22)">Микс салата<span class="pill-price"><span class="disc">22 ₽</span></span></div>
+        <div class="sel-pill" onclick="selectItem(this,'addons','Свежий огурец',20)">Свежий огурец<span class="pill-price"><span class="disc">20 ₽</span></span></div>
+        <div class="sel-pill" onclick="selectItem(this,'addons','Сыр пармезан',17)">Сыр пармезан<span class="pill-price"><span class="disc">17 ₽</span></span></div>
+        <div class="sel-pill" onclick="selectItem(this,'addons','Сыр моцарелла',35)">Сыр моцарелла<span class="pill-price"><span class="disc">35 ₽</span></span></div>
+        <div class="sel-pill" onclick="selectItem(this,'addons','Тостовый хлеб',12)">Тостовый хлеб<span class="pill-price"><span class="disc">12 ₽</span></span></div>
+        <div class="sel-pill" onclick="selectItem(this,'addons','Форель с/с',97)">Форель с/с<span class="pill-price"><span class="disc">97 ₽</span></span></div>
+      </div>
+    </div>
+
+    <!-- САЛАТЫ -->
+    <div class="category">
+      <div class="category-header"><span class="category-title">Салаты</span><div class="category-line"></div></div>
+      <div class="menu-items" data-group2="street" data-multi="true">
+        <div class="menu-item sel-item" onclick="selectItem(this,'street','Салат с рукколой и креветками',490)">
+          <div><div class="dish-row"><span class="dish-title">Салат с рукколой</span><span class="dish-vol">200 г</span><div class="dish-right"><span class="item-price"><span class="disc">490 ₽</span></span></div></div>
+          <div class="dish-title2">и креветками</div>
+          <div class="item-desc">Руккола, авокадо, креветки с тимьяном и чесноком, помидоры, пармезан, соус винегрет</div></div>
+        </div>
+        <div class="menu-item sel-item" onclick="selectItem(this,'street','Салат катанезе',472)">
+          <div><div class="dish-row"><span class="dish-title">Салат катанезе</span><span class="dish-vol">200 г</span><div class="dish-right"><span class="item-price"><span class="disc">472 ₽</span></span></div></div>
+          <div class="item-desc">Баклажаны, перец болгарский, цукини, маслины таджасские, оливки каламата, базилик, орехи кедровые, бальзамический крем, масло оливковое</div></div>
+        </div>
+        <div class="menu-item sel-item" onclick="selectItem(this,'street','Салат с курицей терияки и овощами',232)">
+          <div><div class="dish-row"><span class="dish-title">Салат с курицей терияки</span><span class="dish-vol">200 г</span><div class="dish-right"><span class="item-price"><span class="disc">232 ₽</span></span></div></div>
+          <div class="dish-title2">и овощами</div>
+          <div class="item-desc">Куриное бедро, помидоры, микс салата, кинза, лук фри, авокадо, соус терияки, майонез, сыр пармезан, чипсы из тортильи</div></div>
+        </div>
+        <div class="menu-item sel-item" onclick="selectItem(this,'street','Салат фермерский',371)">
+          <div><div class="dish-row"><span class="dish-title">Салат фермерский</span><span class="dish-vol">340 г</span><div class="dish-right"><span class="item-price"><span class="disc">371 ₽</span></span></div></div>
+          <div class="item-desc">Помидоры, огурцы, листья романо</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- СУПЫ -->
+    <div class="category">
+      <div class="category-header"><span class="category-title">Супы</span><div class="category-line"></div></div>
+      <div class="menu-items" data-group2="street" data-multi="true">
+        <div class="menu-item sel-item" onclick="selectItem(this,'street','Лапша куриная с перепелиным яйцом',34)">
+          <div><div class="dish-row"><span class="dish-title">Лапша куриная</span><span class="dish-vol">300 г</span><div class="dish-right"><span class="item-price"><span class="disc">34 ₽</span></span></div></div>
+          <div class="dish-title2">с перепелиным яйцом</div>
+          <div class="item-desc">Куриный бульон, вермишель, курица, петрушка</div></div>
+        </div>
+        <div class="menu-item sel-item" onclick="selectItem(this,'street','Суп Минестроне',209)">
+          <div><div class="dish-row"><span class="dish-title">Суп Минестроне</span><span class="dish-vol">300 г</span><div class="dish-right"><span class="item-price"><span class="disc">209 ₽</span></span></div></div>
+          <div class="item-desc">Фасоль белая, цуккини, баклажан, болгарский перец, морковь, свежие брокколи, овощной бульон, соус песто, базилик</div></div>
+        </div>
+        <div class="menu-item sel-item" onclick="selectItem(this,'street','Томатный суп с крутонами',188)">
+          <div><div class="dish-row"><span class="dish-title">Томатный суп</span><span class="dish-vol">270 г</span><div class="dish-right"><span class="item-price"><span class="disc">188 ₽</span></span></div></div>
+          <div class="dish-title2">с крутонами из чиабатты</div>
+          <div class="item-desc">Сельдерей, лук, морковь, томаты в собственном соку, тимьян, чеснок</div></div>
+        </div>
+        <div class="menu-item sel-item" onclick="selectItem(this,'street','Буйабес',188)">
+          <div><div class="dish-row"><span class="dish-title">Буйабес</span><span class="dish-vol">280 г</span><div class="dish-right"><span class="item-price"><span class="disc">188 ₽</span></span></div></div>
+          <div class="item-desc">Лук, морковь, сельдерей, томатная паста, рыбный бульон, вино белое, креветки, форель, кальмар, треска, болгарский перец, цукини, картофель, помидоры черри, соус айоли (домашний майонез, куркума, чеснок), багет обжаренный на гриле</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- МЯСО И РЫБА -->
+    <div class="category">
+      <div class="category-header"><span class="category-title">Мясо & Рыба</span><div class="category-line"></div></div>
+      <div class="menu-items" data-group2="street" data-multi="true">
+        <div class="menu-item sel-item" onclick="selectItem(this,'street','Курица отварная',88)">
+          <div><div class="dish-row"><span class="dish-title">Курица отварная</span><span class="dish-vol">120 г</span><div class="dish-right"><span class="item-price"><span class="disc">88 ₽</span></span></div></div>
+          <div class="item-desc">Филе куриное, соль, белый перец</div></div>
+        </div>
+        <div class="menu-item sel-item" onclick="selectItem(this,'street','Стейк Рибай',2180)">
+          <div><div class="dish-row"><span class="dish-title">Стейк Рибай</span><span class="dish-vol">210 г</span><div class="dish-right"><span class="item-price"><span class="disc">2180 ₽</span></span></div></div>
+          <div class="item-desc">Говядина (рибай), соль, перец, сливочное масло, розмарин, тимьян</div></div>
+        </div>
+        <div class="menu-item sel-item" onclick="selectItem(this,'street','Филе Миньон',3261)">
+          <div><div class="dish-row"><span class="dish-title">Филе Миньон</span><span class="dish-vol">250 г</span><div class="dish-right"><span class="item-price"><span class="disc">3261 ₽</span></span></div></div>
+          <div class="item-desc">Говядина (вырезка), соль, перец, сливочное масло, розмарин, тимьян</div></div>
+        </div>
+        <div class="menu-item sel-item" onclick="selectItem(this,'street','Стейк Денвер в специях чурасско',1373)">
+          <div><div class="dish-row"><span class="dish-title">Стейк Денвер</span><span class="dish-vol">180 г</span><div class="dish-right"><span class="item-price"><span class="disc">1373 ₽</span></span></div></div>
+          <div class="dish-title2">в специях чурасско</div>
+          <div class="item-desc">Альтернативный говяжий стейк (лопаточная часть), чёрный перец, кориандр, паприка, копчёная паприка, острый чили</div></div>
+        </div>
+        <div class="menu-item sel-item" onclick="selectItem(this,'street','Стейк лосося с соусом бер блан',1004)">
+          <div><div class="dish-row"><span class="dish-title">Стейк лосося</span><span class="dish-vol">250 г</span><div class="dish-right"><span class="item-price"><span class="disc">1004 ₽</span></span></div></div>
+          <div class="dish-title2">с соусом бер блан</div>
+          <div class="item-desc">Филе лосося на коже, соус бер блан (лук шалот, тимьян, чеснок, белое вино, сливки, свежемолотый перец, сливочное масло)</div></div>
+        </div>
+        <div class="menu-item sel-item" onclick="selectItem(this,'street','Копчёное ребро говяжье',3018)">
+          <div><div class="dish-row"><span class="dish-title">Копчёное ребро</span><span class="dish-vol">450 г</span><div class="dish-right"><span class="item-price"><span class="disc">3018 ₽</span></span></div></div>
+          <div class="dish-title2">говяжье</div>
+          <div class="item-desc">Соль, перец, копчение на ольховой щепе 20 часов</div></div>
+        </div>
+        <div class="menu-item sel-item" onclick="selectItem(this,'street','Брискет',494)">
+          <div><div class="dish-row"><span class="dish-title">Брискет</span><span class="dish-vol">180 г</span><div class="dish-right"><span class="item-price"><span class="disc">494 ₽</span></span></div></div>
+          <div class="item-desc">Соль, перец, копчение на ольховой щепе 20 часов</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ГАРНИРЫ -->
+    <div class="category">
+      <div class="category-header"><span class="category-title">Гарниры</span><div class="category-line"></div></div>
+      <div class="menu-items" data-group2="street" data-multi="true">
+        <div class="menu-item sel-item" onclick="selectItem(this,'street','Рис басмати',24)">
+          <div><div class="dish-row"><span class="dish-title">Рис басмати</span><span class="dish-vol">150 г</span><div class="dish-right"><span class="item-price"><span class="disc">24 ₽</span></span></div></div></div>
+        </div>
+        <div class="menu-item sel-item" onclick="selectItem(this,'street','Рис пряный',30)">
+          <div><div class="dish-row"><span class="dish-title">Рис пряный</span><span class="dish-vol">150 г</span><div class="dish-right"><span class="item-price"><span class="disc">30 ₽</span></span></div></div></div>
+        </div>
+        <div class="menu-item sel-item" onclick="selectItem(this,'street','Рис с овощами',47)">
+          <div><div class="dish-row"><span class="dish-title">Рис с овощами</span><span class="dish-vol">150 г</span><div class="dish-right"><span class="item-price"><span class="disc">47 ₽</span></span></div></div></div>
+        </div>
+        <div class="menu-item sel-item" onclick="selectItem(this,'street','Пюре картофельное',28)">
+          <div><div class="dish-row"><span class="dish-title">Пюре картофельное</span><span class="dish-vol">150 г</span><div class="dish-right"><span class="item-price"><span class="disc">28 ₽</span></span></div></div>
+          <div class="item-desc">Картофель, сливочное масло, сливки</div></div>
+        </div>
+        <div class="menu-item sel-item" onclick="selectItem(this,'street','Овощи гриль с грибами',135)">
+          <div><div class="dish-row"><span class="dish-title">Овощи гриль</span><span class="dish-vol">160 г</span><div class="dish-right"><span class="item-price"><span class="disc">135 ₽</span></span></div></div>
+          <div class="dish-title2">с грибами</div>
+          <div class="item-desc">Кабачок, баклажан, шампиньоны, перец болгарский</div></div>
+        </div>
+        <div class="menu-item sel-item" onclick="selectItem(this,'street','Запечённый мини картофель',27)">
+          <div><div class="dish-row"><span class="dish-title">Мини картофель</span><span class="dish-vol">150 г</span><div class="dish-right"><span class="item-price"><span class="disc">27 ₽</span></span></div></div>
+          <div class="dish-title2">запечённый</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- СТРИТ-ФУД -->
+    <div class="category">
+      <div class="category-header"><span class="category-title">Стрит-фуд</span><div class="category-line"></div></div>
+      <div class="menu-items" data-group2="street" data-multi="true">
+        <div class="menu-item sel-item" onclick="selectItem(this,'street','Картофель фри',65)">
+          <div><div class="dish-row"><span class="dish-title">Картофель фри</span><span class="dish-vol">120 г</span><div class="dish-right"><span class="item-price"><span class="disc">65 ₽</span></span></div></div></div>
+        </div>
+        <div class="menu-item sel-item" onclick="selectItem(this,'street','Картофель фри с пармезаном и трюфельным маслом',89)">
+          <div><div class="dish-row"><span class="dish-title">Картофель фри</span><span class="dish-vol">135 г</span><div class="dish-right"><span class="item-price"><span class="disc">89 ₽</span></span></div></div>
+          <div class="dish-title2">с пармезаном и трюфельным маслом</div></div>
+        </div>
+        <div class="menu-item sel-item" onclick="selectItem(this,'street','Батат фри с соусом блю чиз',162)">
+          <div><div class="dish-row"><span class="dish-title">Батат фри</span><span class="dish-vol">120 г</span><div class="dish-right"><span class="item-price"><span class="disc">162 ₽</span></span></div></div>
+          <div class="dish-title2">с соусом блю чиз</div>
+          <div class="item-desc">Батат, соус блю чиз</div></div>
+        </div>
+        <div class="menu-item sel-item" onclick="selectItem(this,'street','Бургер с говяжьей котлетой',322)">
+          <div><div class="dish-row"><span class="dish-title">Бургер</span><span class="dish-vol">325 г</span><div class="dish-right"><span class="item-price"><span class="disc">322 ₽</span></span></div></div>
+          <div class="dish-title2">с говяжьей котлетой</div>
+          <div class="item-desc">Говяжий бекон, котлета из говядины, сыр чеддер, огурцы маринованные, помидор, айсберг, лук фри, булочки пшеничные, соус для бургера</div></div>
+        </div>
+        <div class="menu-item sel-item" onclick="selectItem(this,'street','Шаурма с курицей',210)">
+          <div><div class="dish-row"><span class="dish-title">Шаурма</span><span class="dish-vol">380 г</span><div class="dish-right"><span class="item-price"><span class="disc">210 ₽</span></span></div></div>
+          <div class="dish-title2">с курицей</div>
+          <div class="item-desc">Маринованное куриное бедро (кориандр, зира), огурцы, помидоры, соус белый BBQ</div></div>
+        </div>
+        <div class="menu-item sel-item" onclick="selectItem(this,'street','Чимичанга с говядиной',200)">
+          <div><div class="dish-row"><span class="dish-title">Чимичанга</span><span class="dish-vol">265 г</span><div class="dish-right"><span class="item-price"><span class="disc">200 ₽</span></span></div></div>
+          <div class="dish-title2">с говядиной</div>
+          <div class="item-desc">Рваная говядина, помидоры, маринованные огурцы, чеснок сушеный, оливковое масло, соус чипотле-майонез</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- СОУСЫ -->
+    <div class="category" style="margin-top:44px">
+      <div class="category-header"><span class="category-title">Соусы</span><div class="category-line"></div></div>
+      <div class="menu-items" data-group2="sauces" data-multi="true">
+        <div class="menu-item sel-item" onclick="selectItem(this,'sauces','Сгущённое молоко',0)"><div class="item-name">Сгущённое молоко <span class="vol">40 мл</span></div></div>
+        <div class="menu-item sel-item" onclick="selectItem(this,'sauces','Сметана',0)"><div class="item-name">Сметана <span class="vol">40 мл</span></div></div>
+        <div class="menu-item sel-item" onclick="selectItem(this,'sauces','Соус барбекю',0)"><div class="item-name">Соус барбекю <span class="vol">40 мл</span></div></div>
+        <div class="menu-item sel-item" onclick="selectItem(this,'sauces','Соус белый барбекю',0)"><div class="item-name">Соус белый барбекю <span class="vol">40 мл</span></div></div>
+        <div class="menu-item sel-item" onclick="selectItem(this,'sauces','Кетчуп',0)"><div class="item-name">Кетчуп <span class="vol">40 мл</span></div></div>
+        <div class="menu-item sel-item" onclick="selectItem(this,'sauces','Майонез',0)"><div class="item-name">Майонез <span class="vol">40 мл</span></div></div>
+        <div class="menu-item sel-item" onclick="selectItem(this,'sauces','Соус медово-горчичный',0)"><div class="item-name">Соус медово-горчичный <span class="vol">40 мл</span></div></div>
+        <div class="menu-item sel-item" onclick="selectItem(this,'sauces','Соус песто',0)"><div class="item-name">Соус песто <span class="vol">40 мл</span></div></div>
+        <div class="menu-item sel-item" onclick="selectItem(this,'sauces','Соус свит-чили',0)"><div class="item-name">Соус свит-чили <span class="vol">40 мл</span></div></div>
+        <div class="menu-item sel-item" onclick="selectItem(this,'sauces','Соус сырный',0)"><div class="item-name">Соус сырный <span class="vol">40 мл</span></div></div>
+        <div class="menu-item sel-item" onclick="selectItem(this,'sauces','Соус терияки',0)"><div class="item-name">Соус терияки <span class="vol">40 мл</span></div></div>
+        <div class="menu-item sel-item" onclick="selectItem(this,'sauces','Соус перечный',0)"><div class="item-name">Соус перечный <span class="vol">40 мл</span></div></div>
+        <div class="menu-item sel-item" onclick="selectItem(this,'sauces','Соус чипотле-майонез',0)"><div class="item-name">Соус чипотле-майонез <span class="vol">40 мл</span></div></div>
+        <div class="menu-item sel-item" onclick="selectItem(this,'sauces','Соус чипотле',0)"><div class="item-name">Соус чипотле <span class="vol">острый · 40 мл</span></div></div>
+      </div>
+    </div>
+
+    <!-- ИТОГО ОСНОВНОЕ -->
+    <div id="total-bar2" style="display:none">
+      <div class="total-inner">
+        <div class="total-top">
+          <span class="total-label">Ваш выбор</span>
+          <button class="total-reset" onclick="resetAll2()">Сбросить</button>
+        </div>
+        <div class="total-selected" id="total-rows2"></div>
+        <div class="total-divider"></div>
+        <div class="total-bottom">
+          <div class="total-sum">
+            <div class="total-sum-original" id="total-original2"></div>
+            <div class="total-sum-final" id="total-final2"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ===== НАПИТКИ ===== -->
+  <div class="menu-section" id="drinks">
+    <div class="category">
+      <div class="category-header"><span class="category-title">Кофе</span><div class="category-line"></div></div>
+      <div class="item-desc" style="margin-bottom:12px;font-size:12px">Доступно альтернативное молоко: кокосовое, миндальное</div>
+      <div class="menu-items">
+        <div class="menu-item"><div class="item-name">Эспрессо <span class="vol">60 мл</span></div></div>
+        <div class="menu-item"><div class="item-name">Американо <span class="vol">200 мл</span></div></div>
+        <div class="menu-item"><div class="item-name">Капучино <span class="vol">250 / 350 мл</span></div></div>
+        <div class="menu-item"><div class="item-name">Латте <span class="vol">250 мл</span></div></div>
+        <div class="menu-item"><div class="item-name">Флэт Уайт <span class="vol">200 мл</span></div></div>
+        <div class="menu-item"><div class="item-name">Раф <span class="vol">350 мл</span></div></div>
+        <div class="menu-item"><div class="item-name">Фисташковый раф <span class="vol">350 мл</span></div></div>
+        <div class="menu-item"><div class="item-name">Раф халва <span class="vol">350 мл</span></div></div>
+        <div class="menu-item"><div class="item-name">Какао <span class="vol">350 мл</span></div></div>
+      </div>
+    </div>
+
+    <div class="category">
+      <div class="category-header"><span class="category-title">Чай</span><div class="category-line"></div></div>
+      <div class="tea-list">
+        <div class="menu-item"><div class="item-name">Ассам <span class="vol">500 мл</span></div></div>
+        <div class="menu-item"><div class="item-name">Эрл Грей <span class="vol">500 мл</span></div></div>
+        <div class="menu-item"><div class="item-name">Сенча <span class="vol">500 мл</span></div></div>
+        <div class="menu-item"><div class="item-name">Жасмин <span class="vol">500 мл</span></div></div>
+        <div class="menu-item"><div class="item-name">Тегуаньинь <span class="vol">500 мл</span></div></div>
+        <div class="menu-item"><div class="item-name">Травяной <span class="vol">500 мл</span></div></div>
+        <div class="menu-item"><div class="item-name">Саган Дайля <span class="vol">500 мл</span></div></div>
+        <div class="menu-item"><div class="item-name">Пуэр Юньнань <span class="vol">500 мл</span></div></div>
+        <div class="menu-item"><div class="item-name">Молочный улун <span class="vol">500 мл</span></div></div>
+      </div>
+    </div>
+
+    <div class="category">
+      <div class="category-header"><span class="category-title">Добавки к чаю</span><div class="category-line"></div></div>
+      <div class="drink-addons">
+        <div class="drink-addon-pill">Лимон</div><div class="drink-addon-pill">Мёд</div>
+        <div class="drink-addon-pill">Имбирь</div><div class="drink-addon-pill">Мята</div>
+        <div class="drink-addon-pill">Чабрец</div>
+      </div>
+    </div>
+
+    <div class="category">
+      <div class="category-header"><span class="category-title">Холодный чай</span><div class="category-line"></div></div>
+      <div class="menu-items">
+        <div class="menu-item"><div class="item-name">Маракуйя-баблгам <span class="vol">300 мл</span></div></div>
+        <div class="menu-item"><div class="item-name">Малина-клубника <span class="vol">300 мл</span></div></div>
+      </div>
+    </div>
+
+    <div class="category">
+      <div class="category-header"><span class="category-title">Фруктовый чай</span><div class="category-line"></div></div>
+      <div class="menu-items">
+        <div class="menu-item"><div class="item-name">Облепиха-груша <span class="vol">500 мл</span></div></div>
+        <div class="menu-item"><div class="item-name">Гранат-малина <span class="vol">500 мл</span></div></div>
+        <div class="menu-item"><div class="item-name">Клюква-розмарин <span class="vol">500 мл</span></div></div>
+        <div class="menu-item"><div class="item-name">Марокканский <span class="vol">500 мл</span></div></div>
+        <div class="menu-item"><div class="item-name">Имбирный <span class="vol">500 мл</span></div></div>
+      </div>
+    </div>
+
+    <div class="category">
+      <div class="category-header"><span class="category-title">Лимонады</span><div class="category-line"></div></div>
+      <div class="menu-items">
+        <div class="menu-item"><div class="item-name">Манго-маракуйя <span class="vol">300 мл</span></div></div>
+        <div class="menu-item"><div class="item-name">Малина-маракуйя <span class="vol">300 мл</span></div></div>
+        <div class="menu-item"><div class="item-name">Гранат-малина <span class="vol">300 мл</span></div></div>
+        <div class="menu-item"><div class="item-name">Мохито классический <span class="vol">300 мл</span></div></div>
+        <div class="menu-item"><div class="item-name">Мохито клубничный <span class="vol">300 мл</span></div></div>
+        <div class="menu-item"><div class="item-name">Голубое миндальное яблоко <span class="vol">300 мл</span></div></div>
+        <div class="menu-item"><div class="item-name">Каламанси-арбуз <span class="vol">300 мл</span></div></div>
+        <div class="menu-item"><div class="item-name">Доктор Пеппер <span class="vol">300 мл</span></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="footer">
+    <div class="header-ornament" style="opacity:1;animation:none">
+      <div class="ornament-line"></div><div class="ornament-diamond"></div><div class="ornament-line right"></div>
+    </div>
+    <div class="footer-text">Приятного аппетита</div>
+  </div>
+
+</div>
+
+<script>
+
+  // ===== СОСТАВЫ БЛЮД =====
+  // Редактировать здесь — подтянется автоматически по названию блюда
+  const SOSTAV = {
+    'Греческий':                          '',
+    'Столичный':                               'Картофель, морковь, горошек, огурцы маринованные, яйцо, майонез, ростбиф',
+    'С курицей и цуккини с соусом песто': '',
+    'Салат из свеклы с сыром фета':       'Свекла запеченная, сыр фета, масло растительное, крем бальзамический, руккола, кедровые орехи',
+    'Салат Андалузский с курицей':        'Пастрами куриное, салат айсберг, помидоры, перец, чипсы из тортильи с паприкой, петрушка, укроп, соус андалузский (майонез, карри, соевый соус)',
+    'Салат с говядиной':                  'Ростбиф, перец болгарский, микс салата (руккола, айсберг, шпинат, романо), пармезан, соус тайский (соевый соус, горчица, лук, масло кунжутное, уксус винный)',
+    'Лапша куриная':                      'Куриный бульон, вермишель, курица, петрушка',
+    'Щи с квашеной капустой с говядиной': '',
+    'Суп харчо с курицей':                          'Бульон куриный, рис, лук, томатная паста, чеснок, кинза, томаты свежие, аджика',
+    'Куриная отбивная':                   '',
+    'Котлета куриная':                    'Куриное бедро, лук, яйца, молоко, хлеб, сухари для панировки',
+    'Бифштекс с яйцом':                   '',
+    'Котлеты рыбные с соусом тар-тар':    '',
+    'Гуляш из говядины с овощами':        'Говядина, лук, морковь, перец болгарский, томатная паста',
+    'Рыба запеченная в соусе «Мисо»':     'Треска, мисо паста, рисовый уксус, апельсиновый сок',
+    'Картофель мини запечённый':          'Картофель бейби, прованские травы, растительное масло',
+    'Картофельное пюре':                  'Картофель, сливочное масло, сливки',
+    'Рис с овощами':                           'Рис басмати, баклажаны, цуккини, болгарский перец, куркума',
+    'Рис отварной':                       'Отварной рис',
+    'Овощи на тепане':                    '',
+    'Пряный булгур':                      'Булгур, куркума, кориандр, карри',
+    'Шаурма с курицей':                      'Маринованное куриное бедро (кориандр, зира), огурцы, помидоры, соус белый BBQ',
+    'Чимичанга с говядиной':                      'Рваная говядина, помидоры, маринованные огурцы, чеснок сушеный, оливковое масло, соус чипотле-майонез',
+    'Бургер с говяжьей котлетой':                      'Говяжий бекон, котлета из говядины, сыр чеддер, огурцы маринованные, помидор, айсберг, лук фри, булочки пшеничные, соус для бургера',
+    'Суп пюре морковно-имбирный':                      'Сельдерей, лук, морковь, картофель, сливочное масло, имбирь, мускатный орех, тимьян, сливки, овощной бульон, семена тыквы',
+    'Шницель куриный':                      'Куриное филе, куриное бедро, сыр',
+    'Котлета домашняя':                      'Говядина, куриное бедро, лук, яйцо, хлеб, молоко, панировка',
+    'Пряный рис':                      'Рис басмати, карри, куркума, кориандр, оливковое масло',
+    'Картофель отварной':                      'Картофель, зелень, масло сливочное',
+    'Овощи гриль с грибами':                      'Кабачок, баклажан, шампиньоны, перец болгарский',
+    'Салат с киноа и овощами':           'Цукини, киноа, огурец, помидоры, мята, кинза, лайм, руккола, перец болгарский, оливковое масло',
+    'Салат крабовый':                      'Яйцо, огурец, крабовые палочки, майонез, кукуруза',
+    'Салат цезарь с курицей':                      'Салат айсберг, пармезан, крутоны из чиабатты, грудка куриная (чеснок, соевый соус), помидоры черри, соус цезарь (чеснок, анчоусы, горчица, вустерский соус, оливковое масло, пармезан, майонез)',
+    'Кальмар в азиатском стиле':          'Кальмар, масло сливочное, лайм, имбирь, перец чили, кинза, соус рыбный, соус свит-чили',
+    'Салат весенний':                    'Огурец, яйцо, петрушка, редис, сметана, лук зелёный',
+    'Сельдь под шубой':                  'Картофель, майонез, филе сельди, морковь отварная, яйцо, свекла, лук репчатый, лук зелёный',
+    'Салат с хрустящими баклажанами и сыром фета': 'Баклажаны, помидоры, сыр фета, семена кунжута, крахмал, соус свит-чили',
+    'Уха Ростовская':                    'Картофель, сельдерей, томаты, лук, рыбный бульон (форель, минтай, белорыбица, треска), петрушка, укроп, филе трески, филе форели',
+    'Куриные купаты':                    'Филе куриное, бедро куриное, лук, чеснок, кориандр, мускатный орех',
+    'Бефстроганов из говядины с грибами': 'Говядина, лук, шампиньоны, сливки, сметана',
+    'Форель на пару':                    'Филе форели на коже',
+    'Картофель жареный':                 'Картофель, масло растительное',
+    'Кус-кус с овощами':                 'Кус-кус, баклажаны, кабачок, болгарский перец',
+    'Брокколи на пару':                  'Капуста брокколи, соль',
+    'Каша дня с ягодами':                      'Уточнять у официанта',
+    'Омлет':                                   'С миксом салата и черри',
+    'Скрэмбл':                                 'С миксом салата и черри',
+    'Яичница из 3-х яиц':                      'С миксом салата и черри',
+    'Тост с форелью с/с и яйцом пашот':        'Тост ржаной, соус гуакамоле (авокадо, сок лимона, перец чили), руккола, яйцо пашот, форель с/с, голландский соус (желтки яичные, сок лимона, сливочное масло)',
+    'Сырники со сметаной':                  '',
+    'Сэндвич с куриным пастрами':         'Тостовый хлеб, масло сливочное, помидоры, салат айсберг, соус цезарь, куриное пастрами, сыр пармезан',
+    'Салат коул-слоу':                   'Капуста белокочанная, морковь, майонез, сметана, чеснок, уксус винный, сахар',
+    'Винегрет':                          'Картофель, морковь, свекла, огурцы солёные, горошек зелёный, петрушка, масло растительное',
+    'Салат из квашеной капусты с ялтинским луком': 'Лук красный, капуста квашеная, масло растительное, сахар',
+    'Суп рассольник':                    'Куриное филе, куриный бульон, картофель, перловая крупа, лук, морковь, огурцы маринованные',
+    'Куриный шашлык':                    'Куриное бедро, паста карри, паприка, мускатный орех',
+    'Митболлы':                          'Говядина, курица, лук, хлеб, яйцо, чеснок сухой, соус чурасско, томатный соус (томаты в собственном соку, орегано, масло сливочное, сахар)',
+    'Рыба в кляре с соусом тар-тар':     'Филе трески, кляр (мука, яйцо), сок лимона',
+    'Гречка на пару':                    'Гречневая крупа, растительное масло',
+    'Салат катанезе':                    'Баклажаны, перец болгарский, цукини, маслины таджасские, оливки каламата, базилик, орехи кедровые, бальзамический крем, масло оливковое',
+    'Салат фермерский':                  'Помидоры, огурцы, листья романо',
+    'Салат с курицей терияки и овощами': 'Куриное бедро, помидоры, микс салата, кинза, лук фри, авокадо, соус терияки, майонез, сыр пармезан, чипсы из тортильи',
+    'Салат с рукколой и креветками':     'Руккола, авокадо, креветки с тимьяном и чесноком, помидоры, пармезан, соус винегрет',
+    'Стейк Денвер в специях чурасско':   'Альтернативный говяжий стейк (лопаточная часть), чёрный перец, кориандр, паприка, копчёная паприка, острый чили',
+    'Копчёное ребро говяжье':            'Соль, перец, копчение на ольховой щепе 20 часов',
+    'Стейк лосося с соусом бер блан':    'Филе лосося на коже, соус бер блан (лук шалот, тимьян, чеснок, белое вино, сливки, свежемолотый перец, сливочное масло)',
+    'Стейк Рибай':                       'Говядина (рибай), соль, перец, сливочное масло, розмарин, тимьян',
+    'Филе Миньон':                       'Говядина (вырезка), соль, перец, сливочное масло, розмарин, тимьян',
+    'Брискет':                           'Говяжья грудинка, соль, перец, копчение на ольховой щепе 20 часов',
+    'Курица отварная':                   'Филе куриное, соль, белый перец',
+    'Суп Минестроне':                    'Фасоль белая, цуккини, баклажан, болгарский перец, морковь, свежие брокколи, овощной бульон, соус песто, базилик',
+    'Томатный суп с крутонами':          'Сельдерей, лук, морковь, томаты в собственном соку, тимьян, чеснок',
+    'Том Ям':                            'Куриный бульон, кокосовое молоко, лемонграсс, корень галангала, лист лайма, шампиньоны, креветки, кальмар, томаты черри, кинза, рис басмати',
+    'Батат фри с соусом блю чиз':        'Батат, соус блю чиз',
+    'Салат овощной':                     'Уточнять у официанта',
+    'Щи из квашеной капусты':            'Уточнять у официанта',
+    'Чикен-строганов':                   'Куриное филе, лук, сливки, сливочное масло, мука',
+    'Рыбные котлеты с соусом тар-тар':   'Уточнять у официанта',
+    'Щи из свежей капусты с говядиной': 'Лук, морковь, картофель, капуста белокочанная, бульон говяжий, говядина',
+    'Салат овощной':                     'Огурец, помидор, редис, ароматное масло',
+    'Рыбные котлеты с соусом тар-тар':   'Треска, капуста белокочанная, хлеб, яйцо, мука, молоко, морковь, лук',
+    'Буйабес':                           'Лук, морковь, сельдерей, томатная паста, рыбный бульон, вино белое, креветки, форель, кальмар, треска, болгарский перец, цукини, картофель, помидоры черри, соус айоли (домашний майонез, куркума, чеснок), багет обжаренный на гриле',
+    'Люля-кебаб из курицы':                    'Грудка куриная, бедро куриное, лук, куркума, кориандр',
+    'Рассольник с курицей':              'Куриное филе, куриный бульон, картофель, перловая крупа, лук, морковь, огурцы маринованные',
+    'Запечёная треска в соусе мисо':     'Треска, мисо паста, рисовый уксус, апельсиновый сок',
+    'Фасоль зеленая с грибами':                'Фасоль стручковая, лук, шампиньоны',
+    'Отварной картофель':                'Картофель, зелень, масло сливочное',
+    'Столичный':                               'Картофель, морковь, горошек, огурцы маринованные, яйцо, майонез, ростбиф',
+    'Салат с курицей и цуккини':               'Пастрами куриное, микс салата, цуккини, помидоры черри, соус песто',
+    'Салат греческий':                   'Помидоры, огурцы, перец, маслины, сыр фета, оливковое масло, орегано',
+    'Морковь по-корейски':                     'Морковь, соевый соус, лимонный сок, сахар, кунжут, чеснок',
+    'Борщ с говядиной':                        'Говядина, капуста, морковь, лук, картофель, свекла, томатная паста, сахар, уксус столовый',
+    'Тефтели из говядины':                     'Говядина, лук, рис, мука, морковь, томатная паста, томаты в собственном соку, сахар, орегано',
+    'Рыба под маринадом':                      'Минтай, лук, морковь, томатная паста, уксус винный, сахар',
+    'Булгур с овощами':                        'Булгур, куркума, болгарский перец, цуккини, баклажан, шампиньоны',
+    'Овощи гриль':                             'Болгарский перец, цуккини, баклажан, шампиньоны',
+    'Булгур с овощами и грибами':         'Булгур, куркума, болгарский перец, цуккини, баклажан, шампиньоны',
+  };
+
+  // Date
+  const months=['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
+  const now=new Date();
+  document.getElementById('dateText').textContent='25 марта 2026';
+
+  // Tab switching
+  function switchTab(id,tab){
+    document.querySelectorAll('.menu-section').forEach(s=>s.classList.remove('active'));
+    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    tab.classList.add('active');
+    document.getElementById(id).querySelectorAll('.category').forEach((c,i)=>{
+      c.style.animation='none'; c.style.opacity='0';
+      requestAnimationFrame(()=>{ c.style.animation=''; c.style.animationDelay=(i*.07)+'s'; });
+    });
+  }
+
+  // ===== KOMPLEKS LOGIC =====
+  const GROUPS = { salat:'Салат', soup:'Суп', main:'Горячее', side:'Гарнир' };
+  const selected = {};
+
+  function select(card, group, name, price) {
+    // Deselect others in group
+    document.querySelectorAll(`[data-group="${group}"] .choice-card`).forEach(c=>c.classList.remove('selected'));
+    // Toggle
+    if(selected[group] && selected[group].name === name) {
+      delete selected[group];
+    } else {
+      card.classList.add('selected');
+      selected[group] = { name, price };
+    }
+
+    updateTotal();
+  }
+
+  function updateTotal() {
+    const bar = document.getElementById('total-bar');
+    const keys = Object.keys(selected);
+    if(keys.length === 0) { bar.style.display='none'; return; }
+
+    bar.style.display='block';
+
+    let original = 0;
+    let rowsHtml = '';
+    const ORDER = ['salat','soup','main','side'];
+    ORDER.forEach(g => {
+      if(!selected[g]) return;
+      const {name, price} = selected[g];
+      original += price;
+      rowsHtml += `
+        <div class="total-row">
+          <div>
+            <div class="total-row-cat">${GROUPS[g]}</div>
+            <div class="total-row-name">${name}</div>
+          </div>
+          <div class="total-row-price">${price} ₽</div>
+        </div>`;
+    });
+
+    const final = original;
+    document.getElementById('total-rows').innerHTML = rowsHtml;
+    document.getElementById('total-original').textContent = '';
+    document.getElementById('total-final').innerHTML = final + ' <span class="total-sum-cur">₽</span>';
+
+    const missing = Object.keys(GROUPS).filter(g => !selected[g]);
+    if(missing.length > 0) {
+      const names = missing.map(g => GROUPS[g].toLowerCase()).join(', ');
+      document.getElementById('total-hint').textContent = `Ещё не выбрано: ${names}`;
+    } else {
+      document.getElementById('total-hint').textContent = 'Полный комплекс выбран ✦';
+    }
+  }
+
+  function resetAll() {
+    Object.keys(selected).forEach(k => delete selected[k]);
+    document.querySelectorAll('.choice-card').forEach(c=>c.classList.remove('selected'));
+    document.getElementById('total-bar').style.display='none';
+  }
+
+  // ===== ОСНОВНОЕ МЕНЮ LOGIC =====
+  const selected2 = {};
+
+  function selectItem(item, group, name, price) {
+    const container = item.closest('[data-group2]') || item.parentElement;
+    const isMulti = container.getAttribute('data-multi') === 'true';
+
+    if (item.classList.contains('selected')) {
+      item.classList.remove('selected');
+      if (selected2[group]) {
+        selected2[group] = selected2[group].filter(i => i.name !== name);
+        if (selected2[group].length === 0) delete selected2[group];
+      }
+    } else {
+      item.classList.add('selected');
+      if (!selected2[group]) selected2[group] = [];
+      selected2[group].push({name, price});
+    }
+    updateTotal2();
+  }
+
+  function updateTotal2() {
+    const bar = document.getElementById('total-bar2');
+    if (Object.keys(selected2).length === 0) { bar.style.display = 'none'; return; }
+    bar.style.display = 'block';
+
+    const LABELS2 = {zavtrak:'Завтрак', addons:'Доп', street:'Стрит-фуд', sauces:'Соус'};
+    const ORDER2 = ['zavtrak','addons','street','sauces'];
+    let original = 0, rowsHtml = '';
+
+    ORDER2.forEach(g => {
+      if (!selected2[g]) return;
+      const items = Array.isArray(selected2[g]) ? selected2[g] : [selected2[g]];
+      items.forEach(({name, price}) => {
+        original += price;
+        rowsHtml += `<div class="total-row">
+          <div><div class="total-row-cat">${LABELS2[g]}</div><div class="total-row-name">${name}</div></div>
+          ${price > 0 ? `<div class="total-row-price">${price} ₽</div>` : ''}
+        </div>`;
+      });
+    });
+
+    const final = original;
+    document.getElementById('total-rows2').innerHTML = rowsHtml;
+    document.getElementById('total-original2').textContent = '';
+    document.getElementById('total-final2').innerHTML = (original > 0 ? final : '—') + ' <span class="total-sum-cur">₽</span>';
+  }
+
+  function resetAll2() {
+    Object.keys(selected2).forEach(k => delete selected2[k]);
+    document.querySelectorAll('#breakfast .sel-item').forEach(c => c.classList.remove('selected'));
+    document.getElementById('total-bar2').style.display = 'none';
+  }
+
+
+</script>
+</body>
+</html>
