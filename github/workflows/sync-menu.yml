@@ -1,0 +1,48 @@
+name: Sync menu from Google Sheets
+
+# Тянет данные из опубликованных вкладок Google-таблицы и кладёт их в data/.
+# Сайт читает эти файлы с того же домена (GitHub Pages) — Google в момент
+# открытия сайта не участвует, поэтому ничего не «режется» у посетителей.
+
+on:
+  schedule:
+    - cron: '*/10 * * * *'   # каждые ~10 минут (время UTC; GitHub может задерживать запуск)
+  workflow_dispatch:          # ручной запуск кнопкой: вкладка Actions → этот workflow → Run workflow
+
+permissions:
+  contents: write             # нужно, чтобы Action мог коммитить обновлённые CSV
+
+concurrency:
+  group: sync-menu
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download CSVs from Google Sheets
+        run: |
+          mkdir -p data
+          BASE="https://docs.google.com/spreadsheets/d/e/2PACX-1vTrE_g7uZIKr2OxbIcPtB06mdcXg11hqYDHU7yzkzSabMqt46YHPmIZo76t_JtZLmHt65BHErLykBp2/pub"
+          curl -sSL --fail --retry 3 --retry-delay 5 "$BASE?output=csv"                          -o data/kompleks.csv
+          curl -sSL --fail --retry 3 --retry-delay 5 "$BASE?gid=601791011&single=true&output=csv" -o data/menu.csv
+          curl -sSL --fail --retry 3 --retry-delay 5 "$BASE?gid=155115519&single=true&output=csv" -o data/sostav.csv
+          # Защита от пустого ответа Google: не перезаписываем рабочие данные мусором
+          for f in kompleks menu sostav; do
+            if [ ! -s "data/$f.csv" ]; then echo "::error::data/$f.csv пустой — прерываю"; exit 1; fi
+          done
+
+      - name: Commit if changed
+        run: |
+          git config user.name  "menu-sync-bot"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/kompleks.csv data/menu.csv data/sostav.csv
+          if git diff --staged --quiet; then
+            echo "Изменений нет — коммит не нужен."
+          else
+            git commit -m "Sync menu data from Google Sheets [skip ci]"
+            git push
+          fi
