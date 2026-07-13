@@ -1,16 +1,21 @@
 name: Sync menu from Google Sheets
 
-# Тянет данные из опубликованных вкладок Google-таблицы и кладёт их в data/.
-# Сайт читает эти файлы с того же домена (GitHub Pages) — Google в момент
-# открытия сайта не участвует, поэтому ничего не «режется» у посетителей.
+# Тянет данные из опубликованных вкладок Google-таблицы, кладёт их в data/
+# И СРАЗУ САМ деплоит сайт на GitHub Pages в этом же запуске.
+# Почему деплой встроен сюда, а не в отдельный static.yml:
+# пуш, сделанный штатным GITHUB_TOKEN, НЕ запускает другие workflow
+# (защита GitHub от рекурсии), поэтому push-триггер static.yml не срабатывал
+# и Pages застревал на старом деплое.
 
 on:
   schedule:
-    - cron: '*/10 * * * *'   # каждые ~10 минут (время UTC; GitHub может задерживать запуск)
-  workflow_dispatch:          # ручной запуск кнопкой: вкладка Actions → этот workflow → Run workflow
+    - cron: '*/10 * * * *'   # каждые ~10 минут (UTC; GitHub может задерживать запуск)
+  workflow_dispatch:          # ручной запуск: вкладка Actions → этот workflow → Run workflow
 
 permissions:
-  contents: write             # нужно, чтобы Action мог коммитить обновлённые CSV
+  contents: write             # коммит обновлённых CSV
+  pages: write                # деплой на Pages
+  id-token: write             # OIDC для actions/deploy-pages
 
 concurrency:
   group: sync-menu
@@ -19,6 +24,9 @@ concurrency:
 jobs:
   sync:
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -46,3 +54,16 @@ jobs:
             git commit -m "Sync menu data from Google Sheets"
             git push
           fi
+
+      # --- Деплой на GitHub Pages в этом же запуске ---
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.'               # весь репозиторий (index.html + data/)
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5
