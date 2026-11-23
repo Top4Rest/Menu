@@ -249,13 +249,14 @@
         '</div><div class="detail-portion">Пищевая ценность на порцию</div>';
     }
     const isCombo = !!item.extra.group;
+    const alreadySelected = isCombo && selected[item.extra.group]?.name === item.title;
     overlay.querySelector('.detail-dialog').innerHTML =
       '<div class="detail-top"><h2 class="detail-name" id="detail-title">' + h(item.title) +
       '</h2><button type="button" class="detail-close" data-detail-close aria-label="Закрыть">×</button></div>' +
       '<div class="detail-heading">Состав</div>' + desc +
       '<div class="detail-heading">Пищевая ценность</div>' + nutritional +
       (isCombo ? '<button type="button" class="detail-select" data-select-detail="' + h(id) + '">' +
-        'Выбрать блюдо</button>' : '');
+        (alreadySelected ? 'Убрать из обеда' : 'Выбрать блюдо') + '</button>' : '');
     overlay.hidden = false;
     document.body.style.overflow = 'hidden';
     overlay.querySelector('.detail-close').focus();
@@ -339,7 +340,7 @@
       return;
     }
     const card = event.target.closest('.choice-card[data-choice-group]');
-    if (card && (event.key === 'Enter' || event.key === ' ')) {
+    if (card && event.target === card && (event.key === 'Enter' || event.key === ' ')) {
       event.preventDefault();
       chooseCard(card);
     }
