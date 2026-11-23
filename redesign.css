@@ -224,3 +224,9 @@ body.has-selection .container{padding-bottom:125px}
   .tab{min-height:45px;padding:11px 3px;font-size:clamp(9px,2.55vw,10.5px);letter-spacing:.015em}
   .menu-category-link{gap:9px}
 }
+
+/* Dual-volume lemonades: clear nutrient blocks for 350 ml and 1 litre. */
+.detail-variant{margin-top:14px}
+.detail-variant + .detail-variant{padding-top:14px;border-top:1px solid var(--new-line)}
+.detail-variant-title{font:500 14px/1.4 'Montserrat',sans-serif;color:var(--new-gold);margin-bottom:8px}
+.detail-portion{line-height:1.45}

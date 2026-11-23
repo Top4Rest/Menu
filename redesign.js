@@ -26,7 +26,7 @@
     const desc = item.desc || composed;
     const rawKb = item.kbzhu && item.kbzhu.some(v => Number(v) !== 0) ? item.kbzhu : null;
     const kb = rawKb || KBZHU[name] || KBZHU[item.name] || null;
-    const id = getDetailRecord(name, desc, kb, { section: section });
+    const id = getDetailRecord(name, desc, kb, { section: section, nutritionVolumes: item.nutritionVolumes || null });
     const size = item.vol ? '<div class="lux-item-vol">' + h(item.vol) + '</div>' : '';
     const price = item.price ? '<div class="lux-item-price">' + h(item.price) + ' ₽</div>' : '';
     const descHtml = desc ? '<p class="lux-item-desc">' + h(desc) + '</p>' : '';
@@ -162,7 +162,34 @@
       Diag.rec.menuCsvMs = Math.round(performance.now() - started);
       Diag.rec.menuCsvStatus = response.status;
       if (!response.ok) throw new Error('Menu CSV ' + response.status);
-      const tabs = parseMenuRows(parseCsv(await response.text()));
+      const csvRows = parseCsv(await response.text());
+      const tabs = parseMenuRows(csvRows);
+      // Preserve two sets of KБЖУ when a single CSV row has 350/1000 ml.
+      const headings = csvRows[0].map(x => (x || '').trim().toLowerCase());
+      const ix = key => headings.indexOf(key);
+      const ixTab = ix('tab'), ixSection = ix('section'), ixCal = ix('cal');
+      const ixHide = ix('hide'), ixVol = ix('vol');
+      const counters = {};
+      if (ixTab >= 0 && ixSection >= 0 && ixCal >= 0) {
+        for (const row of csvRows.slice(1)) {
+          const name = (row[ix('name')] || '').trim();
+          if (!name || (ixHide >= 0 && /^(1|да|true|x|yes)$/i.test((row[ixHide] || '').trim()))) continue;
+          const tab = (row[ixTab] || 'Основное').trim();
+          const section = (row[ixSection] || '').trim();
+          const key = tab + '::' + section;
+          const place = counters[key] || 0;
+          counters[key] = place + 1;
+          const item = tabs[tab]?.map[section]?.items[place];
+          if (!item || ixVol < 0 || !/350\s*\/\s*1000/.test(row[ixVol] || '')) continue;
+          const columns = [0, 1, 2, 3].map(offset => (row[ixCal + offset] || '').split('/').map(t => Number(t.trim().replace(',', '.'))));
+          if (columns.every(x => x.length === 2 && x.every(Number.isFinite))) {
+            item.nutritionVolumes = [
+              { title: '350 мл', kbzhu: columns.map(x => x[0]) },
+              { title: '1 литр', kbzhu: columns.map(x => x[1]) }
+            ];
+          }
+        }
+      }
       data.main = tabs['Основное'] || null;
       data.drinks = tabs['Напитки'] || null;
       if (data.main && data.main.order.length) renderMainLanding();
@@ -272,12 +299,20 @@
       '<p class="detail-text">' + h(liveDesc) + '</p>' :
       '<p class="detail-text">Состав уточняется</p>';
     let nutritional = '<p class="detail-text">КБЖУ уточняется</p>';
-    if (food) {
-      nutritional = '<div class="detail-food-grid">' +
-        liveKb.map((value, i) => '<div class="detail-food-cell"><div class="detail-food-value">' +
-          h(value) + '</div><div class="detail-food-label">' +
-          ['ккал', 'белки, г', 'жиры, г', 'углеводы, г'][i] + '</div></div>').join('') +
-        '</div><div class="detail-portion">Пищевая ценность на порцию</div>';
+    const isDrink = ['Кофе', 'Чай', 'Добавки к напиткам', 'Холодный чай', 'Лимонады'].includes(item.extra.section);
+    const foodGrid = values => '<div class="detail-food-grid">' +
+      values.map((value, i) => '<div class="detail-food-cell"><div class="detail-food-value">' +
+        h(value) + '</div><div class="detail-food-label">' +
+        ['ккал', 'белки, г', 'жиры, г', 'углеводы, г'][i] + '</div></div>').join('') + '</div>';
+    if (Array.isArray(item.extra.nutritionVolumes) && item.extra.nutritionVolumes.length === 2) {
+      nutritional = item.extra.nutritionVolumes.map(variant =>
+        '<div class="detail-variant"><div class="detail-variant-title">' +
+        h(variant.title) + '</div>' + foodGrid(variant.kbzhu) + '</div>').join('');
+    } else if (food) {
+      nutritional = foodGrid(liveKb) + '<div class="detail-portion">Пищевая ценность на порцию</div>';
+    }
+    if (isDrink && (food || item.extra.nutritionVolumes)) {
+      nutritional += '<div class="detail-portion">Ориентировочные КБЖУ по рецептуре и справочным продуктам</div>';
     }
     const isCombo = !!item.extra.group;
     const alreadySelected = isCombo && selected[item.extra.group]?.name === item.title;
