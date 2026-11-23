@@ -236,14 +236,16 @@
     if (!item) return;
     data.lastFocus = document.activeElement;
     const overlay = document.getElementById('new-detail-overlay');
-    const food = item.kbzhu && item.kbzhu.some(v => Number(v) !== 0);
-    const desc = item.desc ?
-      '<p class="detail-text">' + h(item.desc) + '</p>' :
+    const liveKb = item.kbzhu || KBZHU[item.title] || null;
+    const liveDesc = item.desc || SOSTAV[item.title] || '';
+    const food = liveKb && liveKb.some(v => Number(v) !== 0);
+    const desc = liveDesc ?
+      '<p class="detail-text">' + h(liveDesc) + '</p>' :
       '<p class="detail-text">Состав уточняется</p>';
     let nutritional = '<p class="detail-text">КБЖУ уточняется</p>';
     if (food) {
       nutritional = '<div class="detail-food-grid">' +
-        item.kbzhu.map((value, i) => '<div class="detail-food-cell"><div class="detail-food-value">' +
+        liveKb.map((value, i) => '<div class="detail-food-cell"><div class="detail-food-value">' +
           h(value) + '</div><div class="detail-food-label">' +
           ['ккал', 'белки, г', 'жиры, г', 'углеводы, г'][i] + '</div></div>').join('') +
         '</div><div class="detail-portion">Пищевая ценность на порцию</div>';
