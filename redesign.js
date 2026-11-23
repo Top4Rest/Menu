@@ -26,7 +26,7 @@
     const desc = item.desc || composed;
     const rawKb = item.kbzhu && item.kbzhu.some(v => Number(v) !== 0) ? item.kbzhu : null;
     const kb = rawKb || KBZHU[name] || KBZHU[item.name] || null;
-    const id = getDetailRecord(name, desc, kb, { section: section, nutritionVolumes: it.nutritionVolumes || null });
+    const id = getDetailRecord(name, desc, kb, { section: section, nutritionVolumes: item.nutritionVolumes || null });
     const size = item.vol ? '<div class="lux-item-vol">' + h(item.vol) + '</div>' : '';
     const price = item.price ? '<div class="lux-item-price">' + h(item.price) + ' ₽</div>' : '';
     const descHtml = desc ? '<p class="lux-item-desc">' + h(desc) + '</p>' : '';
