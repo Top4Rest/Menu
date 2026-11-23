@@ -1,0 +1,127 @@
+
+/* Top4Rest refined mobile menu — visual layer only, source data is unchanged */
+:root{--new-cream:#f5eee5;--new-muted:#c9bbb3;--new-gold:#dfb979;--new-line:rgba(212,169,106,.28)}
+html{scroll-behavior:smooth}
+button{font-family:inherit}
+button:focus-visible,.choice-card:focus-visible{outline:2px solid #f1cb8e;outline-offset:3px}
+[hidden]{display:none!important}
+.container{max-width:920px}
+.header{padding-top:46px;padding-bottom:38px}
+.tab{letter-spacing:.14em;color:#c7bdb5}
+.tabs{margin-bottom:30px}
+.category{margin-bottom:30px}
+.category-header{margin-bottom:14px}
+.category-title{color:var(--new-gold);font-size:16px}
+.kompleks-note{color:#e0d1c5;letter-spacing:.045em;text-transform:none;font-size:13px;line-height:1.6;margin-bottom:24px}
+.kompleks-price{border-radius:7px;padding:17px 22px;margin-bottom:16px}
+.choice-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.choice-card{
+ position:relative;display:grid;grid-template-columns:27px minmax(0,1fr) 28px;
+ align-items:center;column-gap:13px;min-height:85px;border-radius:9px;
+ border:1px solid rgba(201,169,110,.22);padding:13px 14px;
+ background:linear-gradient(135deg,rgba(83,49,43,.36),rgba(45,33,30,.26));
+ transition:background .18s,border-color .18s;outline:0;cursor:pointer;
+}
+.choice-card:hover{transform:none;background:rgba(201,169,110,.07)}
+.choice-card.selected{border-color:var(--new-gold);background:linear-gradient(120deg,rgba(134,82,50,.25),rgba(57,36,32,.45));box-shadow:0 0 0 1px rgba(201,169,110,.11)}
+.choice-marker{width:25px;height:25px;border:1.5px solid #9a8b80;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#2d211a;font-size:14px}
+.choice-card.selected .choice-marker{background:var(--new-gold);border-color:var(--new-gold)}
+.choice-card.selected .choice-marker:after{content:"✓"}
+.choice-copy{min-width:0}
+.choice-name{padding:0;font-family:'Cormorant Garamond',serif;font-size:23px;font-weight:500;color:var(--new-cream);line-height:1.05}
+.choice-footnote{margin-top:5px;color:var(--new-muted);font-size:11px;line-height:1.45;font-style:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.choice-more{margin-top:4px;color:#dcb777;font-size:10px}
+.choice-card .kbzhu-btn,.lux-info{
+ position:static;display:flex;align-items:center;justify-content:center;
+ width:28px;height:28px;border:1px solid rgba(223,185,121,.65);
+ border-radius:50%;background:transparent;color:var(--new-gold);
+ font:600 13px/1 'Montserrat',sans-serif;cursor:pointer;
+}
+.choice-card .kbzhu-btn{z-index:2}
+.choice-card .kbzhu-btn:hover,.lux-info:hover{background:rgba(223,185,121,.18);color:#fff}
+.choice-extra-price{color:var(--new-gold);font-size:11px;margin-top:3px}
+#total-bar{position:fixed;bottom:max(10px,env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);width:min(calc(100% - 30px),760px);z-index:90;margin:0}
+.total-inner{border-color:rgba(223,185,121,.52);border-radius:17px;padding:12px 17px;background:linear-gradient(130deg,rgba(37,21,23,.98),rgba(50,30,26,.98));box-shadow:0 16px 40px rgba(0,0,0,.65)}
+.total-summary{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.total-summary-info{min-width:0}
+.total-summary-name{color:var(--new-cream);font:400 22px/1.05 'Cormorant Garamond',serif}
+.total-progress{font-size:11px;color:var(--new-gold);margin-top:3px}
+.total-sum-final{font-size:25px;white-space:nowrap}
+.total-action{border:0;border-radius:24px;background:linear-gradient(145deg,#f3d397,#c99a58);color:#2a1c16;padding:11px 17px;font-size:12px;font-weight:600;white-space:nowrap;cursor:pointer;min-height:42px}
+.total-details{margin-top:13px;padding-top:12px;border-top:1px solid var(--new-line)}
+.total-details .total-selected{max-height:34vh;overflow-y:auto;margin-bottom:8px}
+.total-details .total-row-name{font-size:17px}
+.total-details .total-hint{font-size:11px;color:#d0beb0;margin-top:8px}
+body.has-selection .container{padding-bottom:125px}
+.menu-landing-label,.menu-view-title,.drinks-intro{
+ font:400 27px/1.2 'Cormorant Garamond',serif;color:var(--new-cream);margin-bottom:18px
+}
+.menu-category-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}
+.menu-category-link{
+ width:100%;min-height:93px;padding:16px 18px;display:flex;align-items:center;gap:12px;
+ color:var(--new-cream);text-align:left;cursor:pointer;border-radius:9px;
+ border:1px solid rgba(223,185,121,.34);
+ background:linear-gradient(135deg,rgba(121,73,44,.18),rgba(64,34,33,.25))
+}
+.menu-category-link:hover{background:rgba(223,185,121,.10)}
+.menu-category-glyph{width:30px;text-align:center;color:var(--new-gold);font-size:21px;flex-shrink:0}
+.menu-category-text{min-width:0;flex:1}
+.menu-category-name{font:500 24px/1.1 'Cormorant Garamond',serif}
+.menu-category-count{font-size:11px;color:var(--new-muted);margin-top:5px}
+.menu-category-arrow{color:var(--new-gold);font-size:22px;flex-shrink:0}
+.menu-back{display:inline-flex;align-items:center;gap:9px;padding:7px 0 15px;border:0;background:none;color:var(--new-gold);font-size:13px;cursor:pointer}
+.menu-view-title{margin:0 0 23px;text-align:center}
+.menu-view-title:after{content:"";display:block;width:140px;height:1px;margin:15px auto 0;background:var(--new-line)}
+.menu-dish-list{display:flex;flex-direction:column;gap:10px}
+.lux-item{
+ padding:15px 16px;display:grid;grid-template-columns:minmax(0,1fr) auto 29px;
+ gap:14px;align-items:center;border-radius:9px;
+ border:1px solid rgba(223,185,121,.23);background:rgba(75,39,40,.14)
+}
+.lux-item-name{font:500 22px/1.13 'Cormorant Garamond',serif;color:var(--new-cream)}
+.lux-item-desc{font-size:11px;line-height:1.45;color:var(--new-muted);margin-top:6px;max-width:560px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.lux-item-cost{text-align:right;white-space:nowrap;align-self:center}
+.lux-item-price{font-size:13px;font-weight:500;color:var(--new-gold)}
+.lux-item-vol{margin-top:6px;color:var(--new-muted);font-size:11px}
+.drinks-intro{margin-bottom:16px}
+.drinks-filter{display:flex;gap:9px;overflow-x:auto;padding:3px 0 15px;margin-bottom:15px;scrollbar-width:none}
+.drinks-filter::-webkit-scrollbar{display:none}
+.drink-chip{flex:0 0 auto;min-height:42px;padding:10px 16px;border:1px solid var(--new-line);color:var(--new-muted);border-radius:24px;background:transparent;font-size:12px;cursor:pointer}
+.drink-chip.active{background:linear-gradient(135deg,#eed09b,#c79756);border-color:#d3a667;color:#2b1d17;font-weight:600}
+.drink-section-label{font-size:15px;letter-spacing:.2em;color:var(--new-gold);text-transform:uppercase;margin:10px 0 14px}
+.detail-overlay{position:fixed;inset:0;background:rgba(5,4,5,.83);backdrop-filter:blur(6px);z-index:3000;display:flex;align-items:flex-end;justify-content:center;padding:10px}
+.detail-dialog{width:min(100%,540px);max-height:min(88dvh,750px);overflow:auto;overscroll-behavior:contain;background:linear-gradient(155deg,#352022,#201819);border:1px solid rgba(223,185,121,.51);border-radius:22px;padding:24px;color:var(--new-cream);box-shadow:0 14px 48px rgba(0,0,0,.6)}
+.detail-top{display:flex;justify-content:space-between;align-items:flex-start;gap:14px}
+.detail-name{font:400 33px/1.04 'Cormorant Garamond',serif;color:var(--new-cream)}
+.detail-close{width:36px;height:36px;border:1px solid var(--new-line);background:rgba(223,185,121,.09);border-radius:50%;color:var(--new-cream);font-size:20px;cursor:pointer;flex-shrink:0}
+.detail-heading{display:flex;gap:16px;align-items:center;color:var(--new-gold);font-size:13px;letter-spacing:.06em;margin-top:24px;margin-bottom:10px}
+.detail-heading:after{content:"";height:1px;background:var(--new-line);flex:1}
+.detail-text{font-size:13px;line-height:1.65;color:#e1d5cd}
+.detail-food-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;margin-top:14px}
+.detail-food-cell{padding:11px 3px;text-align:center;border:1px solid var(--new-line);border-radius:8px}
+.detail-food-value{font:500 23px 'Cormorant Garamond',serif;color:var(--new-cream)}
+.detail-food-label{font-size:9px;color:var(--new-muted);margin-top:2px}
+.detail-portion{font-size:11px;color:var(--new-muted);margin-top:9px}
+.detail-select{margin-top:24px;display:block;width:100%;min-height:47px;border-radius:12px;border:0;background:linear-gradient(145deg,#f3d397,#c99a58);color:#2a1c16;font-size:14px;font-weight:600;cursor:pointer}
+.detail-select[hidden]{display:none}
+#kbzhuOverlay{display:none!important}
+@media(max-width:640px){
+ .container{padding:0 18px 55px}
+ .header{padding:38px 0 31px}
+ .header h1{font-size:47px}
+ .header-subtitle{font-size:10px}
+ .tabs{justify-content:space-between;gap:0;margin-bottom:26px}
+ .tab{padding:12px 6px;font-size:10px;letter-spacing:.04em}
+ .choice-grid{grid-template-columns:minmax(0,1fr)}
+ .choice-card{min-height:78px}
+ .choice-name{font-size:23px}
+ .menu-category-grid{grid-template-columns:1fr}
+ .menu-category-link{min-height:76px}
+ .lux-item{grid-template-columns:minmax(0,1fr) auto 26px;gap:10px;padding:13px}
+ .lux-item-name{font-size:22px}
+ .lux-item-desc{font-size:11px}
+ .lux-item-price{font-size:12px}
+ .detail-dialog{padding:22px 18px;border-radius:19px}
+ .detail-name{font-size:31px}
+}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.choice-card,.menu-category-link,.detail-dialog{transition:none}}
