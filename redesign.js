@@ -90,10 +90,8 @@
     if (!data.main || !host) return;
     const groups = mainGroups();
     let body = '<h2 class="menu-landing-label">Выберите раздел</h2><div class="menu-category-grid">';
-    groups.forEach((group, index) => {
-      const number = String(index + 1).padStart(2, '0');
+    groups.forEach(group => {
       body += '<button type="button" class="menu-category-link" data-main-category="' + h(group.title) + '">' +
-        '<span class="menu-category-index" aria-hidden="true">' + number + '</span>' +
         '<span class="menu-category-text">' +
         '<span class="menu-category-name">' + h(group.title) + '</span>' +
         '<span class="menu-category-count">' + group.count + ' ' + pluralPositions(group.count) + '</span>' +
