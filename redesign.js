@@ -11,12 +11,9 @@
 
 
   // Two photo previews only. The rest of the menu stays text-first.
-  const DISH_PHOTOS = Object.freeze({
-    'Тёплый салат с куриной печенью': 'images/dishes/teplyy-salat-s-kurinoy-pechenyu.webp',
-    'Бефстроганов': 'images/dishes/befstroganov.webp',
-    'Бефстроганов из говядины с грибами': 'images/dishes/befstroganov.webp'
-  });
-  const dishPhoto = name => DISH_PHOTOS[String(name || '').trim()] || '';
+  // Photo paths are populated from the "photo" column of data/sostav.csv
+  // (published from the Google Sheet "Составы").
+  const dishPhoto = name => (window.DISH_PHOTOS_FROM_SHEET || {})[String(name || '').trim()] || '';
 
   function getDetailRecord(title, desc, kbzhu, extra) {
     const id = 'dish-' + (++data.nextId);
