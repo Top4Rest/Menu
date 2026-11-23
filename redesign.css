@@ -138,17 +138,6 @@ body.has-selection .container{padding-bottom:125px}
   align-items:center;
   background:linear-gradient(115deg,rgba(90,48,41,.28),rgba(52,33,32,.27));
 }
-.menu-category-index{
-  width:29px;
-  flex:0 0 29px;
-  font-family:'Montserrat',sans-serif;
-  font-size:13px;
-  letter-spacing:.1em;
-  font-weight:500;
-  color:var(--new-gold);
-  opacity:.9;
-  text-align:center;
-}
 .menu-category-text{
   min-width:0;
   flex:1 1 auto;
@@ -194,10 +183,44 @@ body.has-selection .container{padding-bottom:125px}
   .menu-category-grid{grid-template-columns:minmax(0,1fr);gap:9px}
   .menu-category-link{min-height:72px;padding:13px 16px;gap:13px}
   .menu-category-name{font-size:24px}
-  .menu-category-index{font-size:13px}
   .menu-category-count{font-size:11px}
 }
 @media(max-width:360px){
   .menu-category-name{font-size:22px}
   .menu-category-link{padding:12px;gap:10px}
+}
+
+/* Balanced three-way navigation and unnumbered categories, 2026-11-23. */
+.tabs{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:0;
+  width:100%;
+  overflow:visible;
+}
+.tab{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:100%;
+  min-width:0;
+  min-height:46px;
+  padding:12px 5px;
+  box-sizing:border-box;
+  text-align:center;
+  white-space:normal;
+  line-height:1.25;
+  letter-spacing:.04em;
+  font-size:clamp(9px,2.5vw,11px);
+}
+.menu-category-link{
+  gap:12px;
+}
+.menu-category-text{
+  margin-left:0;
+}
+@media(max-width:640px){
+  .tabs{grid-template-columns:repeat(3,minmax(0,1fr));margin-bottom:26px}
+  .tab{min-height:45px;padding:11px 3px;font-size:clamp(9px,2.55vw,10.5px);letter-spacing:.015em}
+  .menu-category-link{gap:9px}
 }
