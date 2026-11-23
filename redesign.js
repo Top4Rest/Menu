@@ -9,6 +9,15 @@
     .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 
+
+  // Two photo previews only. The rest of the menu stays text-first.
+  const DISH_PHOTOS = Object.freeze({
+    'Тёплый салат с куриной печенью': 'images/dishes/teplyy-salat-s-kurinoy-pechenyu.webp',
+    'Бефстроганов': 'images/dishes/befstroganov.webp',
+    'Бефстроганов из говядины с грибами': 'images/dishes/befstroganov.webp'
+  });
+  const dishPhoto = name => DISH_PHOTOS[String(name || '').trim()] || '';
+
   function getDetailRecord(title, desc, kbzhu, extra) {
     const id = 'dish-' + (++data.nextId);
     data.details.set(id, { title: title || '', desc: desc || '', kbzhu: kbzhu || null, extra: extra || {} });
@@ -27,10 +36,13 @@
     const rawKb = item.kbzhu && item.kbzhu.some(v => Number(v) !== 0) ? item.kbzhu : null;
     const kb = rawKb || KBZHU[name] || KBZHU[item.name] || null;
     const id = getDetailRecord(name, desc, kb, { section: section, nutritionVolumes: item.nutritionVolumes || null });
+    const photo = dishPhoto(name);
+    const thumb = photo ? '<img class="lux-item-photo" src="' + h(photo) + '" alt="' + h(name) + '" loading="lazy" decoding="async">' : '';
     const size = item.vol ? '<div class="lux-item-vol">' + h(item.vol) + '</div>' : '';
     const price = item.price ? '<div class="lux-item-price">' + h(item.price) + ' ₽</div>' : '';
     const descHtml = desc ? '<p class="lux-item-desc">' + h(desc) + '</p>' : '';
-    return '<article class="lux-item">' +
+    return '<article class="lux-item' + (photo ? ' lux-has-photo' : '') + '">' +
+      thumb +
       '<div><div class="lux-item-name">' + h(name) + '</div>' + descHtml + '</div>' +
       '<div class="lux-item-cost">' + price + size + '</div>' +
       dishInfo(id, name) +
@@ -223,11 +235,14 @@
         const kb = KBZHU[name] || null;
         const detailId = getDetailRecord(name, desc, kb, { group: group, price: Number(item.price) || 0 });
         const detail = desc ? '<div class="choice-footnote">' + h(desc) + '</div>' : '';
+        const photo = dishPhoto(name);
+        const photoHtml = photo ? '<img class="choice-photo" src="' + h(photo) + '" alt="' + h(name) + '" loading="lazy" decoding="async">' : '';
         const extra = Number(item.price) > 0 ? '<div class="choice-extra-price">+' + Number(item.price) + ' ₽</div>' : '';
         body += '<div role="button" tabindex="0" aria-pressed="false" class="choice-card" data-choice-group="' +
           group + '" data-choice-name="' + h(name) + '" data-choice-price="' + (Number(item.price) || 0) +
-          '" data-choice-detail="' + h(detailId) + '">' +
+          '" data-choice-detail="' + h(detailId) + '"' + (photo ? ' data-has-photo="true"' : '') + '>' +
           '<span class="choice-marker" aria-hidden="true"></span>' +
+          photoHtml +
           '<div class="choice-copy"><div class="choice-name">' + h(name) + '</div>' +
           detail + extra + '</div>' +
           dishInfo(detailId, name) + '</div>';
@@ -314,11 +329,14 @@
     if (isDrink && (food || item.extra.nutritionVolumes)) {
       nutritional += '<div class="detail-portion">Ориентировочные КБЖУ по рецептуре и справочным продуктам</div>';
     }
+    const photo = dishPhoto(item.title);
+    const modalPhoto = photo ? '<img class="detail-dish-image" src="' + h(photo) + '" alt="' + h(item.title) + '">' : '';
     const isCombo = !!item.extra.group;
     const alreadySelected = isCombo && selected[item.extra.group]?.name === item.title;
     overlay.querySelector('.detail-dialog').innerHTML =
       '<div class="detail-top"><h2 class="detail-name" id="detail-title">' + h(item.title) +
       '</h2><button type="button" class="detail-close" data-detail-close aria-label="Закрыть">×</button></div>' +
+      modalPhoto +
       '<div class="detail-heading">Состав</div>' + desc +
       '<div class="detail-heading">Пищевая ценность</div>' + nutritional +
       (isCombo ? '<button type="button" class="detail-select" data-select-detail="' + h(id) + '">' +
