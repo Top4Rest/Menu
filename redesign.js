@@ -48,45 +48,76 @@
     return m === 1 ? 'блюдо' : (m >= 2 && m <= 4 ? 'блюда' : 'блюд');
   }
 
-  function glyph(title) {
-    const t = String(title || '').toLowerCase();
-    if (/салат/.test(t)) return '✦';
-    if (/суп/.test(t)) return '♨';
-    if (/горяч/.test(t)) return '♧';
-    if (/гарнир/.test(t)) return '◈';
-    if (/завтрак/.test(t)) return '☀';
-    if (/гриль/.test(t)) return '♨';
-    if (/закуск/.test(t)) return '◇';
-    if (/десерт/.test(t)) return '✧';
-    return '◆';
+
+  // Five guest-facing groups. Original Sheets/CSV sections stay intact.
+  const MAIN_GROUP_DEFINITIONS = [
+    { title: 'Завтраки', sections: ['Завтраки', 'Добавки к завтракам'] },
+    { title: 'Салаты и закуски', sections: ['Закуски', 'Салаты', 'Горячие закуски'] },
+    { title: 'Супы', sections: ['Супы'] },
+    { title: 'Горячее и гриль', sections: ['Горячие блюда', 'Гриль'] },
+    { title: 'Гарниры и хлеб', sections: ['Гарниры', 'Хлеб'] }
+  ];
+
+  function mainGroups() {
+    if (!data.main) return [];
+    const used = new Set();
+    const groups = MAIN_GROUP_DEFINITIONS.map(group => {
+      const sections = group.sections.filter(title => !!data.main.map[title]);
+      sections.forEach(title => used.add(title));
+      return {
+        title: group.title,
+        sections: sections,
+        count: sections.reduce((sum, title) => sum + data.main.map[title].items.length, 0)
+      };
+    }).filter(group => group.sections.length);
+    // Do not hide any future category added to the spreadsheet.
+    data.main.order.forEach(title => {
+      if (!used.has(title)) {
+        groups.push({title, sections: [title], count: data.main.map[title].items.length});
+      }
+    });
+    return groups;
+  }
+
+  function pluralPositions(n) {
+    const last = n % 10, lastTwo = n % 100;
+    return lastTwo >= 11 && lastTwo <= 14 ? 'позиций' :
+      last === 1 ? 'позиция' : (last >= 2 && last <= 4 ? 'позиции' : 'позиций');
   }
 
   function renderMainLanding() {
-    const source = data.main, host = document.getElementById('breakfast');
-    if (!source || !host) return;
+    const host = document.getElementById('breakfast');
+    if (!data.main || !host) return;
+    const groups = mainGroups();
     let body = '<h2 class="menu-landing-label">Выберите раздел</h2><div class="menu-category-grid">';
-    source.order.forEach(title => {
-      const sec = source.map[title];
-      const count = sec.items.filter(item => item.type !== 'pill').length || sec.items.length;
-      body += '<button type="button" class="menu-category-link" data-main-category="' + h(title) + '">' +
-        '<span class="menu-category-glyph" aria-hidden="true">' + glyph(title) + '</span>' +
-        '<span class="menu-category-text"><span class="menu-category-name">' + h(title) + '</span>' +
-        '<span class="menu-category-count">' + count + ' ' + plural(count) + '</span></span>' +
-        '<span class="menu-category-arrow" aria-hidden="true">›</span></button>';
+    groups.forEach((group, index) => {
+      const number = String(index + 1).padStart(2, '0');
+      body += '<button type="button" class="menu-category-link" data-main-category="' + h(group.title) + '">' +
+        '<span class="menu-category-index" aria-hidden="true">' + number + '</span>' +
+        '<span class="menu-category-text">' +
+        '<span class="menu-category-name">' + h(group.title) + '</span>' +
+        '<span class="menu-category-count">' + group.count + ' ' + pluralPositions(group.count) + '</span>' +
+        '</span><span class="menu-category-arrow" aria-hidden="true">›</span></button>';
     });
     body += '</div>';
     host.innerHTML = '<div id="main-category-home">' + body + '</div><div id="main-category-view" hidden></div>';
   }
 
   function openMainCategory(title) {
-    if (!data.main || !data.main.map[title]) return;
+    const group = mainGroups().find(x => x.title === title);
+    if (!group) return;
     const home = document.getElementById('main-category-home');
     const view = document.getElementById('main-category-view');
     if (!home || !view) return;
     home.hidden = true;
-    const sec = data.main.map[title];
+    const sections = group.sections.map(sectionName => {
+      const section = data.main.map[sectionName];
+      const subheading = group.sections.length > 1 ?
+        '<h3 class="main-subsection-title">' + h(sectionName) + '</h3>' : '';
+      return '<section class="main-subsection">' + subheading + itemList(section) + '</section>';
+    }).join('');
     view.innerHTML = '<button type="button" class="menu-back" data-main-back>‹ Все категории</button>' +
-      '<h2 class="menu-view-title">' + h(title) + '</h2>' + itemList(sec);
+      '<h2 class="menu-view-title">' + h(title) + '</h2>' + sections;
     view.hidden = false;
     view.querySelector('.menu-back').focus({ preventScroll: true });
     document.querySelector('.tabs').scrollIntoView({ behavior: 'smooth', block: 'start' });
