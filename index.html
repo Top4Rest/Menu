@@ -524,7 +524,7 @@
 </style>
 <!-- Mobile redesign: progressive enhancement, safe to remove without changing data logic -->
 <link rel="stylesheet" href="redesign.css?v=6">
-<script defer src="redesign.js?v=6"></script>
+<script defer src="redesign.js?v=7"></script>
 </head>
 <body>
 <div class="container">
@@ -1799,6 +1799,7 @@
   // Колонки: name, sostav, cal, prot, fat, carb. Подтягивается к любому блюду
   // по совпадению названия (комплекс, основное меню — везде). Пусто = выключено.
   const DICT_CSV_URL = 'data/sostav.csv';
+  window.DISH_PHOTOS_FROM_SHEET = Object.create(null);
 
   async function loadDict(){
     if (!DICT_CSV_URL) return;            // выключено — остаются текущие данные
@@ -1812,13 +1813,19 @@
       const header = rows[0].map(h => h.trim().toLowerCase());
       const col = (...n) => { for (const x of n){ const i = header.indexOf(x); if (i !== -1) return i; } return -1; };
       const iName=col('name','название','наименование','блюдо'), iSost=col('sostav','состав','описание'),
-            iCal=col('cal','ккал'), iProt=col('prot','белки'), iFat=col('fat','жиры'), iCarb=col('carb','углеводы');
+            iCal=col('cal','ккал'), iProt=col('prot','белки'), iFat=col('fat','жиры'), iCarb=col('carb','углеводы'), iPhoto=col('photo','фото','image');
       const num = v => { v=(v||'').toString().trim().replace(',','.'); if(v==='') return null; const n=parseFloat(v); return isNaN(n)?null:n; };
       let n=0;
       for (let i = 1; i < rows.length; i++){
         const r = rows[i];
         const name = (r[iName] || '').trim();
         if (!name) continue;
+        const photoPath = iPhoto!==-1 ? (r[iPhoto]||'').trim() : '';
+        if (/^images\/dishes\/[a-zA-Z0-9_.-]+\.webp$/i.test(photoPath)) {
+          window.DISH_PHOTOS_FROM_SHEET[name] = photoPath;
+        } else {
+          delete window.DISH_PHOTOS_FROM_SHEET[name];
+        }
         const sostav = iSost!==-1 ? (r[iSost]||'').trim() : '';
         if (sostav) SOSTAV[name] = sostav;
         const c=num(r[iCal]), p=num(r[iProt]), f=num(r[iFat]), u=num(r[iCarb]);
