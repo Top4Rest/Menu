@@ -36,13 +36,10 @@
     const rawKb = item.kbzhu && item.kbzhu.some(v => Number(v) !== 0) ? item.kbzhu : null;
     const kb = rawKb || KBZHU[name] || KBZHU[item.name] || null;
     const id = getDetailRecord(name, desc, kb, { section: section, nutritionVolumes: item.nutritionVolumes || null });
-    const photo = dishPhoto(name);
-    const thumb = photo ? '<img class="lux-item-photo" src="' + h(photo) + '" alt="' + h(name) + '" loading="lazy" decoding="async">' : '';
     const size = item.vol ? '<div class="lux-item-vol">' + h(item.vol) + '</div>' : '';
     const price = item.price ? '<div class="lux-item-price">' + h(item.price) + ' ₽</div>' : '';
     const descHtml = desc ? '<p class="lux-item-desc">' + h(desc) + '</p>' : '';
-    return '<article class="lux-item' + (photo ? ' lux-has-photo' : '') + '">' +
-      thumb +
+    return '<article class="lux-item">' +
       '<div><div class="lux-item-name">' + h(name) + '</div>' + descHtml + '</div>' +
       '<div class="lux-item-cost">' + price + size + '</div>' +
       dishInfo(id, name) +
@@ -235,14 +232,11 @@
         const kb = KBZHU[name] || null;
         const detailId = getDetailRecord(name, desc, kb, { group: group, price: Number(item.price) || 0 });
         const detail = desc ? '<div class="choice-footnote">' + h(desc) + '</div>' : '';
-        const photo = dishPhoto(name);
-        const photoHtml = photo ? '<img class="choice-photo" src="' + h(photo) + '" alt="' + h(name) + '" loading="lazy" decoding="async">' : '';
         const extra = Number(item.price) > 0 ? '<div class="choice-extra-price">+' + Number(item.price) + ' ₽</div>' : '';
         body += '<div role="button" tabindex="0" aria-pressed="false" class="choice-card" data-choice-group="' +
           group + '" data-choice-name="' + h(name) + '" data-choice-price="' + (Number(item.price) || 0) +
-          '" data-choice-detail="' + h(detailId) + '"' + (photo ? ' data-has-photo="true"' : '') + '>' +
+          '" data-choice-detail="' + h(detailId) + '">' +
           '<span class="choice-marker" aria-hidden="true"></span>' +
-          photoHtml +
           '<div class="choice-copy"><div class="choice-name">' + h(name) + '</div>' +
           detail + extra + '</div>' +
           dishInfo(detailId, name) + '</div>';
