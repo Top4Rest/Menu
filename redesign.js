@@ -149,7 +149,7 @@
     const groups = [
       ['salat', 'Салат'], ['soup', 'Суп'], ['main', 'Горячее'], ['side', 'Гарнир']
     ];
-    data.details.clear();
+    /* Keep previously registered menu and drink details across parallel CSV loads. */
     let body = '<div class="kompleks-price"><span class="kompleks-price-label">Комплексный обед</span>' +
       '<span class="kompleks-price-value">' + h(KOMPLEKS_PRICE) + ' ₽</span></div>' +
       '<div class="kompleks-note">✦ &nbsp; Выберите по одному блюду из каждой категории &nbsp; ✦</div>';
