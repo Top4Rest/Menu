@@ -13,7 +13,11 @@
   // Two photo previews only. The rest of the menu stays text-first.
   // Photo paths are populated from the "photo" column of data/sostav.csv
   // (published from the Google Sheet "Составы").
-  const dishPhoto = name => (window.DISH_PHOTOS_FROM_SHEET || {})[String(name || '').trim()] || '';
+  const dishPhoto = name => {
+    const photos = window.DISH_PHOTOS_FROM_SHEET || {};
+    const key = String(name || '').trim();
+    return photos[key] || (key === 'Пюре картофельное' ? photos['Картофельное пюре'] : '') || '';
+  };
 
   function getDetailRecord(title, desc, kbzhu, extra) {
     const id = 'dish-' + (++data.nextId);
